@@ -34,3 +34,9 @@ RUN chmod +x /usr/local/bin/drush
 # Install terminus
 RUN curl -L https://github.com/pantheon-systems/terminus/releases/latest/download/terminus.phar --output /usr/local/bin/terminus
 RUN chmod +x /usr/local/bin/terminus
+
+# Copy devcontainer scripts
+COPY uceap-drupal-dev-* /usr/local/bin/
+RUN mkdir -p /usr/local/etc/uceap-dev
+COPY example.drush.yml /usr/local/etc/uceap-dev
+COPY vscode-launch.json /usr/local/etc/uceap-dev

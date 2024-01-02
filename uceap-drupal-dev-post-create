@@ -1,0 +1,22 @@
+#!/bin/bash
+
+# Authenticate to Pantheon iff the user set a token env var
+if [[ -n "$TERMINUS_TOKEN" ]]; then
+    terminus -n auth:login --machine-token="$TERMINUS_TOKEN"
+fi
+
+# set global ServerName so that apachectl isn't chatty
+if [[ -n "$CODESPACE_NAME" ]]; then
+  SERVER_NAME="$CODESPACE_NAME-8080.app.github.dev"
+  HTTP_ADDRESS="$SERVER_NAME"
+else
+  SERVER_NAME="localhost"
+  HTTP_ADDRESS="$SERVER_NAME:8080"
+fi
+echo "ServerName $SERVER_NAME" | sudo tee /etc/apache2/conf-available/global-servername.conf
+sudo a2enconf global-servername
+
+# Setup drush
+mkdir -p drush
+export HTTP_ADDRESS
+build/templater.sh /usr/local/etc/uceap-dev/example.drush.yml > drush/drush.yml
