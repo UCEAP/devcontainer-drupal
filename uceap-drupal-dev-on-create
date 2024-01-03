@@ -51,3 +51,8 @@ chmod g+s web/sites/default/files
 # Setup VS Code
 mkdir -p .vscode
 cp /usr/local/etc/uceap-dev/vscode-launch.json .vscode/launch.json
+
+# Run local devcontainer lifecycle scripts
+if [ -x .devcontainer/onCreate.sh ]; then
+  .devcontainer/onCreate.sh
+fi

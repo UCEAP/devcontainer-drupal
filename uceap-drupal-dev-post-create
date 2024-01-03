@@ -20,3 +20,8 @@ sudo a2enconf global-servername
 mkdir -p drush
 export HTTP_ADDRESS
 build/templater.sh /usr/local/etc/uceap-dev/example.drush.yml > drush/drush.yml
+
+# Run local devcontainer lifecycle scripts
+if [ -x .devcontainer/postCreate.sh ]; then
+  .devcontainer/postCreate.sh
+fi

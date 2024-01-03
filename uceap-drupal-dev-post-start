@@ -7,3 +7,8 @@ sudo service redis-server start
 # this seems to more reliably get the private proxy working
 sudo apache2ctl stop
 sudo apache2ctl start
+
+# Run local devcontainer lifecycle scripts
+if [ -x .devcontainer/postStart.sh ]; then
+  .devcontainer/postStart.sh
+fi

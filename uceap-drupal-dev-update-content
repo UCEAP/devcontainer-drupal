@@ -29,3 +29,8 @@ umask 002
 sudo service mariadb start
 build/db-rebuild.sh database.sql.gz
 rm database.sql.gz
+
+# Run local devcontainer lifecycle scripts
+if [ -x .devcontainer/updateContent.sh ]; then
+  .devcontainer/updateContent.sh
+fi
