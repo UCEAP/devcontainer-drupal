@@ -39,4 +39,4 @@ RUN chmod +x /usr/local/bin/terminus
 COPY uceap-drupal-dev-* /usr/local/bin/
 RUN mkdir -p /usr/local/etc/uceap-dev
 COPY example.drush.yml /usr/local/etc/uceap-dev
-COPY vscode-launch.json /usr/local/etc/uceap-dev
+COPY vscode-*.json /usr/local/etc/uceap-dev

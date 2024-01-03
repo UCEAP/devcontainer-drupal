@@ -1,0 +1,17 @@
+{
+  "recommendations": [
+    "bmewburn.vscode-intelephense-client",
+    "dbaeumer.vscode-eslint",
+    "eamodio.gitlens",
+    "GitHub.codespaces",
+    "GitHub.copilot",
+    "GitHub.copilot-chat",
+    "GitHub.remotehub",
+    "github.vscode-github-actions",
+    "GitHub.vscode-pull-request-github",
+    "Gruntfuggly.todo-tree",
+    "mblode.twig-language-2",
+    "ms-vscode.remote-repositories",
+    "ms-vsliveshare.vsliveshare"
+  ]
+}
