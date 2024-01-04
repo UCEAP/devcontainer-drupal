@@ -49,7 +49,8 @@ chgrp www-data web/sites/default/files
 chmod g+s web/sites/default/files
 
 # Setup drush and other vendor binaries
-echo "PATH=\"\$PATH:`pwd`/vendor/bin\"" >> ~/.profile
+echo "PATH=\"\$PATH:`pwd`/vendor/bin\"" >> ~/.zshrc
+echo "PATH=\"\$PATH:`pwd`/vendor/bin\"" >> ~/.bashrc
 
 # Setup VS Code
 mkdir -p .vscode
