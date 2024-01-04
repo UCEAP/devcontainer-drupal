@@ -27,10 +27,6 @@ RUN echo 'xdebug.log_level = 0' >> /usr/local/etc/php/conf.d/xdebug.ini
 # Only use higher port for Apache, so that port forwarding is more consistent.
 RUN sed -i 's/Listen\s*80$/# Listen 80/' /etc/apache2/ports.conf
 
-# Install drush
-RUN curl -L https://github.com/drush-ops/drush-launcher/releases/latest/download/drush.phar --output /usr/local/bin/drush
-RUN chmod +x /usr/local/bin/drush
-
 # Install terminus
 RUN curl -L https://github.com/pantheon-systems/terminus/releases/latest/download/terminus.phar --output /usr/local/bin/terminus
 RUN chmod +x /usr/local/bin/terminus
