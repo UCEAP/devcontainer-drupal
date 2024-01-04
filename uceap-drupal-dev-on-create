@@ -48,6 +48,9 @@ composer compile-theme
 chgrp www-data web/sites/default/files
 chmod g+s web/sites/default/files
 
+# Setup drush and other vendor binaries
+echo "PATH=\"`pwd`/vendor/bin:\$PATH\"" >> ~/.profile
+
 # Setup VS Code
 mkdir -p .vscode
 cp /usr/local/etc/uceap-dev/vscode-launch.json .vscode/launch.json
