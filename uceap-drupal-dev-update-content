@@ -1,6 +1,11 @@
 #!/bin/bash
 set -eo pipefail
 
+# during first run, the new PATH from the on-create script is not yet in effect
+if ( ! command -v drush > /dev/null ); then
+  export PATH="`pwd`/vendor/bin:$PATH"
+fi
+
 # we need to preserve gitconfig if it already exists
 if [ -f ~/.gitconfig ]; then
   gitconfig_existed=true
