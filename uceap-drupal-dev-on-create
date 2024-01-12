@@ -16,7 +16,6 @@ EOF
 sudo chmod a+x "$(pwd)" && sudo rm -rf /var/www/html && sudo ln -s "$(pwd)/web" /var/www/html
 
 # Setup database
-sudo mysql -u$MYSQL_USER -e "SET PASSWORD=PASSWORD('$MYSQL_PASSWORD')"
 cat <<EOF > ~/.my.cnf
 [client]
 user="$MYSQL_USER"
