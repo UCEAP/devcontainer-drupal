@@ -22,6 +22,9 @@ host="$MYSQL_HOST"
 user="$MYSQL_USER"
 password="$MYSQL_PASSWORD"
 EOF
+
+# Create database (after dropping it in case we hade a previous one lying around)
+mysqladmin -f drop $MYSQL_DATABASE
 mysqladmin create $MYSQL_DATABASE
 
 # translate mysql env vars to our template vars
