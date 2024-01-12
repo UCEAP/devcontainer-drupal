@@ -18,6 +18,7 @@ sudo chmod a+x "$(pwd)" && sudo rm -rf /var/www/html && sudo ln -s "$(pwd)/web" 
 # Setup database
 cat <<EOF > ~/.my.cnf
 [client]
+host="$MYSQL_HOST"
 user="$MYSQL_USER"
 password="$MYSQL_PASSWORD"
 EOF
