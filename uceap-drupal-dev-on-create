@@ -41,20 +41,7 @@ cat >> web/sites/default/settings.local.php <<EOF
 EOF
 
 composer install
-
-# we need to preserve gitconfig if it already exists
-if [ -f ~/.gitconfig ]; then
-  gitconfig_existed=true
-fi
-# ownership of the workspace directory won't match when using bindfs
-git config --global --add safe.directory "$(pwd)"
-# TESTING does something in compile-theme really require git?!?
 composer compile-theme
-# but later on vscode will try setting global git config (credential helper, etc) ONLY if gitconfig doesn't exist
-if [ ! $gitconfig_existed ]; then
-  rm ~/.gitconfig
-fi
-# FWIW vscode will also fix the safe.directory setting
 
 # Set file permissions so both httpd and user can write to files
 chgrp www-data web/sites/default/files
