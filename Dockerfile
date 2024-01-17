@@ -4,7 +4,7 @@ FROM mcr.microsoft.com/devcontainers/php:8.2
 RUN sed -i 's/^UMASK\s*022/UMASK 002/' /etc/login.defs
 RUN usermod -aG www-data vscode
 
-# Install MariaDB and Redis and PHP (incl Apache)
+# Install MariaDB and Redis and PHP (incl Apache) and Cypress dependencies
 RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
     && apt-get install -y libpng-dev libzip-dev \
     && docker-php-ext-install mysqli pdo pdo_mysql \
@@ -13,6 +13,7 @@ RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
     && pecl install redis zip \
     && docker-php-ext-enable redis zip \
     && apt-get install -y mariadb-server mariadb-client redis-server redis-tools \
+    && apt-get install -y npm libgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev libnss3 libxss1 libasound2 libxtst6 xauth xvfb \
     && apt-get clean -y && rm -rf /var/lib/apt/lists/*
 
 # Configure PHP, make memory_limit and upload_max_filesize match Pantheon
@@ -36,3 +37,11 @@ COPY uceap-drupal-dev-* /usr/local/bin/
 RUN mkdir -p /usr/local/etc/uceap-dev
 COPY example.drush.yml /usr/local/etc/uceap-dev
 COPY vscode-*.json /usr/local/etc/uceap-dev
+
+# Install Cypress
+USER vscode
+WORKDIR /home/vscode
+RUN npm install cypress
+RUN npm install @bahmutov/cypress-esbuild-preprocessor
+RUN npm install @badeball/cypress-cucumber-preprocessor
+RUN node_modules/.bin/cypress install

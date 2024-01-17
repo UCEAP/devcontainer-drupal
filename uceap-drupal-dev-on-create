@@ -49,7 +49,7 @@ chgrp www-data web/sites/default/files
 chmod g+s web/sites/default/files
 
 # Setup drush and other vendor binaries
-echo "export PATH=\"`pwd`/vendor/bin:\$PATH\"" | tee -a ~/.bashrc ~/.zshrc ~/.zshrc.local
+echo "export PATH=\"`pwd`/vendor/bin:\$HOME/node_modules/.bin:\$PATH\"" | tee -a ~/.bashrc ~/.zshrc ~/.zshrc.local
 
 # Setup VS Code
 mkdir -p .vscode
