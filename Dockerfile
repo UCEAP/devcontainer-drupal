@@ -37,11 +37,3 @@ COPY uceap-drupal-dev-* /usr/local/bin/
 RUN mkdir -p /usr/local/etc/uceap-dev
 COPY example.drush.yml /usr/local/etc/uceap-dev
 COPY vscode-*.json /usr/local/etc/uceap-dev
-
-# Install Cypress
-USER vscode
-WORKDIR /home/vscode
-RUN npm install cypress
-RUN npm install @bahmutov/cypress-esbuild-preprocessor
-RUN npm install @badeball/cypress-cucumber-preprocessor
-RUN node_modules/.bin/cypress install
