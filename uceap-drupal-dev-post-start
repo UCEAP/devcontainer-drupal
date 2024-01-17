@@ -1,6 +1,10 @@
 #!/bin/bash
 
-# this seems to be necessary to reliably get the codespace private proxy working
+# make sure db and cache are running, just in case of restarts
+sudo service mariadb start
+sudo service redis-server start
+
+# this seems to more reliably get the private proxy working
 sudo apache2ctl stop
 sleep 1 # wait for apache to stop
 sudo apache2ctl start

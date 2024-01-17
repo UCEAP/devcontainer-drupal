@@ -12,7 +12,7 @@ RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
     && docker-php-ext-install gd \
     && pecl install redis zip \
     && docker-php-ext-enable redis zip \
-    && apt-get install -y mariadb-client redis-tools \
+    && apt-get install -y mariadb-server mariadb-client redis-server redis-tools \
     && apt-get clean -y && rm -rf /var/lib/apt/lists/*
 
 # Configure PHP, make memory_limit and upload_max_filesize match Pantheon

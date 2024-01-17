@@ -16,16 +16,17 @@ EOF
 sudo chmod a+x "$(pwd)" && sudo rm -rf /var/www/html && sudo ln -s "$(pwd)/web" /var/www/html
 
 # Setup database
+sudo service mariadb start
+sudo mysql -u$MYSQL_USER -e "SET PASSWORD=PASSWORD('$MYSQL_PASSWORD')"
 cat <<EOF > ~/.my.cnf
 [client]
-host="$MYSQL_HOST"
 user="$MYSQL_USER"
 password="$MYSQL_PASSWORD"
 EOF
-
-# Create database (after dropping it in case we hade a previous one lying around)
-mysqladmin -f drop $MYSQL_DATABASE
 mysqladmin create $MYSQL_DATABASE
+
+# and cache
+sudo service redis-server start
 
 # translate mysql env vars to our template vars
 export DB_HOST="$MYSQL_HOST" DB_PORT="$MYSQL_TCP_PORT" DB_USER="$MYSQL_USER" DB_PASSWORD="$MYSQL_PASSWORD" DB_NAME="$MYSQL_DATABASE"
