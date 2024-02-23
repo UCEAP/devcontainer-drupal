@@ -32,6 +32,10 @@ RUN sed -i 's/Listen\s*80$/# Listen 80/' /etc/apache2/ports.conf
 RUN curl -L https://github.com/pantheon-systems/terminus/releases/latest/download/terminus.phar --output /usr/local/bin/terminus
 RUN chmod +x /usr/local/bin/terminus
 
+# Install atuin
+RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+RUN PATH="$HOME/.cargo/bin:$PATH" cargo install atuin
+
 # Copy devcontainer scripts
 COPY uceap-drupal-dev-* /usr/local/bin/
 RUN mkdir -p /usr/local/etc/uceap-dev
