@@ -6,8 +6,8 @@ RUN usermod -aG www-data vscode
 
 # Install MariaDB and Redis and PHP (incl Apache) and Cypress dependencies
 RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
-    && apt-get install -y libpng-dev libzip-dev \
-    && docker-php-ext-install mysqli pdo pdo_mysql \
+    && apt-get install -y libpng-dev libzip-dev libicu-dev \
+    && docker-php-ext-install mysqli pdo pdo_mysql intl \
     && docker-php-ext-configure gd \
     && docker-php-ext-install gd \
     && pecl install redis zip \
