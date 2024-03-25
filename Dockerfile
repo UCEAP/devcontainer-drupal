@@ -42,6 +42,3 @@ COPY vscode-*.json /usr/local/etc/uceap-dev
 USER vscode
 RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
 RUN PATH="$HOME/.cargo/bin:$PATH" cargo install atuin
-
-# Tnstall GitHub CLI Copilot Extension
-RUN gh extension install github/gh-copilot
