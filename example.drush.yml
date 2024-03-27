@@ -1,2 +1,2 @@
 options:
-  uri: 'http://{{HTTP_ADDRESS}}'
+  uri: '{{PROTOCOL}}://{{HTTP_ADDRESS}}'

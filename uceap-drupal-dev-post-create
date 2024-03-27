@@ -14,9 +14,11 @@ fi
 if [[ -n "$CODESPACE_NAME" ]]; then
   SERVER_NAME="$CODESPACE_NAME-8080.app.github.dev"
   HTTP_ADDRESS="$SERVER_NAME"
+  PROTOCOL="https"
 else
   SERVER_NAME="localhost"
   HTTP_ADDRESS="$SERVER_NAME:8080"
+  PROTOCOL="http"
 fi
 echo "ServerName $SERVER_NAME" | sudo tee /etc/apache2/conf-available/global-servername.conf
 sudo a2enconf global-servername
