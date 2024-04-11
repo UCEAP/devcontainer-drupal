@@ -39,6 +39,16 @@ COPY example.drush.yml /usr/local/etc/uceap-dev
 COPY vscode-*.json /usr/local/etc/uceap-dev
 
 # Install atuin
-USER vscode
-RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
-RUN PATH="$HOME/.cargo/bin:$PATH" cargo install atuin
+#
+# # The recommended way to install atuin is to use cargo, but that takes *forever*:
+# USER vscode
+# RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+# RUN PATH="$HOME/.cargo/bin:$PATH" cargo install atuin
+#
+# # So instead we download the precompiled binary for our cpu architecture:
+RUN curl -L https://github.com/atuinsh/atuin/releases/download/v18.1.0/atuin-v18.1.0-`uname -m`-unknown-linux-gnu.tar.gz | tar zx --wildcards --absolute-names --transform 's,[^/]*,/usr/local/bin,' '*/atuin'
+RUN chmod +x /usr/local/bin/atuin
+
+# Install go-jira
+RUN curl -L https://github.com/go-jira/jira/releases/download/v1.0.27/jira-linux-amd64 --output /usr/local/bin/jira
+RUN chmod +x /usr/local/bin/jira
