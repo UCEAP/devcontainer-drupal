@@ -1,9 +1,5 @@
 A docker image supporting [GitHub Codespaces](https://github.com/features/codespaces) and [local devcontainers](https://containers.dev) for UCEAP Drupal projects, based on [Microsoft's PHP image](https://github.com/devcontainers/images/tree/main/src/php).
 
-## Using this image
-
-This is meant to be used in a Docker container on a platform that supports [Development Containers](https://containers.dev/). This includes GitHub Codespaces, Visual Studio Code, and PhpStorm.
-
 See [Local development for UCEAP Drupal projects](https://github.com/UCEAP/.github-private/wiki/Local-development-for-UCEAP-Drupal-projects) in the UCEAP Software Engineering wiki for more information on getting started.
 
 ## Personalization
