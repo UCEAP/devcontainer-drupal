@@ -30,4 +30,4 @@ I frequently invoke `uceap-drupal-dev-update-content` to reset my local environm
 
 Sometimes a process can die or port forwarding can fail. `uceap-drupal-dev-post-start` runs a few commands that should get things working again. (Again, zsh shell completion makes this `post-s<TAB>`).
 
-Using devcontainers faciliates treating local environments as epemeral: they're quick and easy to setup. Treat them as safe to destroy because you can always create a new one (or multiples ones, to suit your needs). One thing you might miss is your shell history. Check out [Atuin](https://atuin.sh/) to sync your shell history across environments. `Control-R` has never looked so good 😎
+Using devcontainers faciliates treating local environments as ephemeral: they're quick and easy to setup. Treat them as safe to destroy because you can always create a new one (or multiples ones, to suit your needs). One thing you might miss is your shell history. Check out [Atuin](https://atuin.sh/) to sync your shell history across environments. `Control-R` has never looked so good 😎
