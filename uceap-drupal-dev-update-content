@@ -16,6 +16,9 @@ fi
 # re-run composer install (e.g. in case we've switched branches since last time we ran this script)
 composer install
 
+# re-build the theme (likewise in case of changes)
+composer compile-theme
+
 # during first run, the new PATH from the on-create script is not yet in effect
 if ( ! command -v drush > /dev/null ); then
   export PATH="`pwd`/vendor/bin:$PATH"
