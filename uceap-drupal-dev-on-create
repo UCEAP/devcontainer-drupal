@@ -15,11 +15,14 @@ EOF
 # This is how the example codespace changes the docroot. If it's good enough for them, it's good enough for me.
 sudo chmod a+x "$(pwd)" && sudo rm -rf /var/www/html && sudo ln -s "$(pwd)/web" /var/www/html
 
-# Setup database
-sudo service mariadb start
-sudo mysql -u$MYSQL_USER -e "SET PASSWORD=PASSWORD('$MYSQL_PASSWORD')"
+# Setup database if MYSQL_HOST = 127.0.0.1
+if [ "$MYSQL_HOST" = "127.0.0.1" ]; then
+  sudo service mariadb start
+  sudo mysql -u$MYSQL_USER -e "SET PASSWORD=PASSWORD('$MYSQL_PASSWORD')"
+fi
 cat <<EOF > ~/.my.cnf
 [client]
+host="$MYSQL_HOST"
 user="$MYSQL_USER"
 password="$MYSQL_PASSWORD"
 EOF
