@@ -8,6 +8,8 @@ Devcontainers support dotfiles!
 
 See the [GitHub documentation](https://docs.github.com/en/codespaces/setting-your-user-preferences/personalizing-github-codespaces-for-your-account#dotfiles) for more info, and check out [Brandt's personal dotfiles](https://github.com/kurowski/dotfiles) for an example.
 
+Visual Studio Code users should also look into the settings available in the Dev Containers extension, such as [Default Extensions](vscode://settings/dev.containers.defaultExtensions) to automatically install your favorite extensions in devcontainers.
+
 ## Quality of life
 
 This image includes several scripts that integrate with the devcontainer lifecycle, but these can also be used independently:
