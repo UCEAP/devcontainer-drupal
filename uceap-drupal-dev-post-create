@@ -5,9 +5,14 @@ if [[ -n "$TERMINUS_TOKEN" ]]; then
   terminus -n auth:login --machine-token="$TERMINUS_TOKEN"
 fi
 
-# Tnstall GitHub CLI Copilot Extension
+# Install GitHub CLI Copilot Extension
 if [[ -n "$GH_TOKEN" ]] || [[ -n "$GITHUB_TOKEN" ]] ; then
   gh extension install github/gh-copilot
+fi
+
+# Setup Jira
+if [[ -n "$JIRA_API_TOKEN" ]] && [[ -n "$JIRA_EMAIL" ]] && [[ -n "$JIRA_PROJECT" ]] && [[ -n "$JIRA_BOARD" ]] ; then
+  jira init --installation cloud --server https://uceapit.atlassian.net --auth-type basic --login "$JIRA_EMAIL" --project "$JIRA_PROJECT" --board "$JIRA_BOARD"
 fi
 
 # set global ServerName so that apachectl isn't chatty
