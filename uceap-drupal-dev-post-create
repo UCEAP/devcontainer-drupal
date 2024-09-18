@@ -11,8 +11,8 @@ if [[ -n "$GH_TOKEN" ]] || [[ -n "$GITHUB_TOKEN" ]] ; then
 fi
 
 # Setup Jira
-if [[ -n "$JIRA_API_TOKEN" ]] && [[ -n "$JIRA_EMAIL" ]] && [[ -n "$JIRA_PROJECT" ]] && [[ -n "$JIRA_BOARD" ]] ; then
-  jira init --installation cloud --server https://uceapit.atlassian.net --auth-type basic --login "$JIRA_EMAIL" --project "$JIRA_PROJECT" --board "$JIRA_BOARD"
+if [[ -n "$JIRA_API_TOKEN" ]] && [[ -n "$JIRA_EMAIL" ]] && [[ -n "$JIRA_PROJECT_KEY" ]] && [[ -n "$JIRA_BOARD" ]] ; then
+  jira init --installation cloud --server https://uceapit.atlassian.net --auth-type basic --login "$JIRA_EMAIL" --project "$JIRA_PROJECT_KEY" --board "$JIRA_BOARD"
 fi
 
 # set global ServerName so that apachectl isn't chatty
