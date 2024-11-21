@@ -23,6 +23,9 @@ RUN sed -i 's/post_max_size\s*=.*/post_max_size=100M/g' /usr/local/etc/php/php.i
 RUN sed -i 's/upload_max_filesize\s*=.*/upload_max_filesize=100M/g' /usr/local/etc/php/php.ini
 RUN sed -i 's/variables_order\s*=.*/variables_order="EGPCS"/g' /usr/local/etc/php/php.ini
 
+# Increase the mysql max_allowed_packet size
+RUN sed -i 's/^#max_allowed_packet/max_allowed_packet/' /etc/mysql/mariadb.conf.d/50-server.cnf
+
 # Stop xdebug from spamming the console
 RUN echo 'xdebug.log_level = 0' >> /usr/local/etc/php/conf.d/xdebug.ini
 
