@@ -46,8 +46,8 @@ COPY vscode-*.json /usr/local/etc/uceap-dev
 # RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
 # RUN PATH="$HOME/.cargo/bin:$PATH" cargo install atuin
 #
-# # So instead we download the precompiled binary for our cpu architecture:
-RUN curl -sL https://github.com/atuinsh/atuin/releases/download/v18.3.0/atuin-`uname -m`-unknown-linux-gnu.tar.gz | tar zx --no-same-owner --wildcards --absolute-names --transform 's,[^/]*,/usr/local/bin,' '*/atuin'
+# # So instead we download the latest precompiled binary for our cpu architecture:
+RUN curl -sL $(curl -s https://api.github.com/repos/atuinsh/atuin/releases/latest | jq -r '.assets[] | select(.name == "atuin-'`uname -m`'-unknown-linux-gnu.tar.gz") | .browser_download_url') | tar zx --no-same-owner --wildcards --absolute-names --transform 's,[^/]*,/usr/local/bin,' '*/atuin'
 
 # Install the jira-cli precompiled binary for our cpu architecture:
 RUN curl -sL https://github.com/ankitpokhrel/jira-cli/releases/download/v1.5.1/jira_1.5.1_linux_`uname -m | sed s/aarch64/arm64/`.tar.gz | tar zx --no-same-owner --wildcards --absolute-names --transform 's,[^/]*,/usr/local,' '*/bin/jira'
