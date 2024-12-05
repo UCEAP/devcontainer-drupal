@@ -12,7 +12,7 @@ RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
     && docker-php-ext-install gd \
     && pecl install redis zip \
     && docker-php-ext-enable redis zip \
-    && apt-get install -y mariadb-server mariadb-client redis-server redis-tools \
+    && apt-get install -y mariadb-client redis-tools \
     && apt-get install -y gh npm libgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev libnss3 libxss1 libasound2 libxtst6 xauth xvfb \
     && apt-get clean -y && rm -rf /var/lib/apt/lists/*
 
@@ -22,9 +22,6 @@ RUN sed -i 's/memory_limit\s*=.*/memory_limit=2048M/g' /usr/local/etc/php/php.in
 RUN sed -i 's/post_max_size\s*=.*/post_max_size=100M/g' /usr/local/etc/php/php.ini
 RUN sed -i 's/upload_max_filesize\s*=.*/upload_max_filesize=100M/g' /usr/local/etc/php/php.ini
 RUN sed -i 's/variables_order\s*=.*/variables_order="EGPCS"/g' /usr/local/etc/php/php.ini
-
-# Increase the mysql max_allowed_packet size
-RUN sed -i 's/^#max_allowed_packet/max_allowed_packet/' /etc/mysql/mariadb.conf.d/50-server.cnf
 
 # Stop xdebug from spamming the console
 RUN echo 'xdebug.log_level = 0' >> /usr/local/etc/php/conf.d/xdebug.ini
