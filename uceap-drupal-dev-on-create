@@ -22,7 +22,6 @@ host="$MYSQL_HOST"
 user="$MYSQL_USER"
 password="$MYSQL_PASSWORD"
 EOF
-mysqladmin create $MYSQL_DATABASE
 
 # translate mysql env vars to our template vars
 export DB_HOST="$MYSQL_HOST" DB_PORT="$MYSQL_TCP_PORT" DB_USER="$MYSQL_USER" DB_PASSWORD="$MYSQL_PASSWORD" DB_NAME="$MYSQL_DATABASE"
