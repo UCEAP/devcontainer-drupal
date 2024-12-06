@@ -12,7 +12,7 @@ RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
     && docker-php-ext-install gd \
     && pecl install redis zip \
     && docker-php-ext-enable redis zip \
-    && apt-get install -y mariadb-server mariadb-client redis-server redis-tools \
+    && apt-get install -y mariadb-client redis-tools \
     && apt-get install -y gh npm libgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev libnss3 libxss1 libasound2 libxtst6 xauth xvfb \
     && apt-get clean -y && rm -rf /var/lib/apt/lists/*
 
@@ -22,9 +22,6 @@ RUN sed -i 's/memory_limit\s*=.*/memory_limit=2048M/g' /usr/local/etc/php/php.in
 RUN sed -i 's/post_max_size\s*=.*/post_max_size=100M/g' /usr/local/etc/php/php.ini
 RUN sed -i 's/upload_max_filesize\s*=.*/upload_max_filesize=100M/g' /usr/local/etc/php/php.ini
 RUN sed -i 's/variables_order\s*=.*/variables_order="EGPCS"/g' /usr/local/etc/php/php.ini
-
-# Increase the mysql max_allowed_packet size
-RUN sed -i 's/^#max_allowed_packet/max_allowed_packet/' /etc/mysql/mariadb.conf.d/50-server.cnf
 
 # Stop xdebug from spamming the console
 RUN echo 'xdebug.log_level = 0' >> /usr/local/etc/php/conf.d/xdebug.ini
@@ -49,8 +46,8 @@ COPY vscode-*.json /usr/local/etc/uceap-dev
 # RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
 # RUN PATH="$HOME/.cargo/bin:$PATH" cargo install atuin
 #
-# # So instead we download the precompiled binary for our cpu architecture:
-RUN curl -sL https://github.com/atuinsh/atuin/releases/download/v18.3.0/atuin-`uname -m`-unknown-linux-gnu.tar.gz | tar zx --no-same-owner --wildcards --absolute-names --transform 's,[^/]*,/usr/local/bin,' '*/atuin'
+# # So instead we download the latest precompiled binary for our cpu architecture:
+RUN curl -sL $(curl -s https://api.github.com/repos/atuinsh/atuin/releases/latest | jq -r '.assets[] | select(.name == "atuin-'`uname -m`'-unknown-linux-gnu.tar.gz") | .browser_download_url') | tar zx --no-same-owner --wildcards --absolute-names --transform 's,[^/]*,/usr/local/bin,' '*/atuin'
 
 # Install the jira-cli precompiled binary for our cpu architecture:
 RUN curl -sL https://github.com/ankitpokhrel/jira-cli/releases/download/v1.5.1/jira_1.5.1_linux_`uname -m | sed s/aarch64/arm64/`.tar.gz | tar zx --no-same-owner --wildcards --absolute-names --transform 's,[^/]*,/usr/local,' '*/bin/jira'
