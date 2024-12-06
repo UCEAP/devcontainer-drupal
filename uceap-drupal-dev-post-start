@@ -1,11 +1,5 @@
 #!/bin/bash
 
-
-# sometimes on codespaces we need to trampoline httpd to get the private proxy working
-sudo apache2ctl stop
-sleep 1 # wait for apache to stop
-sudo apache2ctl start
-
 # Run local devcontainer lifecycle scripts
 if [ -x .devcontainer/postStart.sh ]; then
   .devcontainer/postStart.sh
