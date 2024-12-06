@@ -49,7 +49,6 @@ sudo find web/sites/default/files -type f -exec chmod g+w {} +
 # which messes up permissions on the profiler directory that gets created when the caches are rebuilt by db-rebuild.sh
 umask 002
 
-sudo service mariadb start
 build/db-rebuild.sh database.sql.gz
 rm database.sql.gz
 

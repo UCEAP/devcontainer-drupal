@@ -50,4 +50,5 @@ COPY vscode-*.json /usr/local/etc/uceap-dev
 RUN curl -sL $(curl -s https://api.github.com/repos/atuinsh/atuin/releases/latest | jq -r '.assets[] | select(.name == "atuin-'`uname -m`'-unknown-linux-gnu.tar.gz") | .browser_download_url') | tar zx --no-same-owner --wildcards --absolute-names --transform 's,[^/]*,/usr/local/bin,' '*/atuin'
 
 # Install the jira-cli precompiled binary for our cpu architecture:
+# FIXME use latest release instead, see atuin example above
 RUN curl -sL https://github.com/ankitpokhrel/jira-cli/releases/download/v1.5.1/jira_1.5.1_linux_`uname -m | sed s/aarch64/arm64/`.tar.gz | tar zx --no-same-owner --wildcards --absolute-names --transform 's,[^/]*,/usr/local,' '*/bin/jira'
