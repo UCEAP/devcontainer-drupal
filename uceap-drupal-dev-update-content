@@ -31,7 +31,7 @@ fi
 # ownership of the workspace directory won't match when using bindfs
 git config --global --add safe.directory "$(pwd)"
 # gh runs git, so we need to set the safe.directory in order for it to work
-gh release download --clobber --pattern '*.gz'
+gh release download --clobber --pattern 'files.tag.gz'
 # but later on vscode will try setting global git config (credential helper, etc) ONLY if gitconfig doesn't exist
 if [ ! $gitconfig_existed ]; then
   rm ~/.gitconfig
@@ -48,9 +48,6 @@ sudo find web/sites/default/files -type f -exec chmod g+w {} +
 # the first time we run this script the default umask is still in effect,
 # which messes up permissions on the profiler directory that gets created when the caches are rebuilt by db-rebuild.sh
 umask 002
-
-build/db-rebuild.sh database.sql.gz
-rm database.sql.gz
 
 # Run local devcontainer lifecycle scripts
 if [ -x .devcontainer/updateContent.sh ]; then
