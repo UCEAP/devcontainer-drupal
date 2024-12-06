@@ -19,11 +19,11 @@ fi
 if [[ -n "$CODESPACE_NAME" ]]; then
   SERVER_NAME="$CODESPACE_NAME-8080.app.github.dev"
   HTTP_ADDRESS="$SERVER_NAME"
-  PROTOCOL="https"
+  HTTP_PROTOCOL="https"
 else
   SERVER_NAME="localhost"
   HTTP_ADDRESS="$SERVER_NAME:8080"
-  PROTOCOL="http"
+  HTTP_PROTOCOL="http"
 fi
 echo "ServerName $SERVER_NAME" | sudo tee /etc/apache2/conf-available/global-servername.conf
 sudo a2enconf global-servername
@@ -31,6 +31,7 @@ sudo a2enconf global-servername
 # Setup drush
 mkdir -p drush
 export HTTP_ADDRESS
+export HTTP_PROTOCOL
 build/templater.sh /usr/local/etc/uceap-dev/example.drush.yml > drush/drush.yml
 
 # Run local devcontainer lifecycle scripts
