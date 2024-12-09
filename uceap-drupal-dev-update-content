@@ -31,7 +31,7 @@ fi
 # ownership of the workspace directory won't match when using bindfs
 git config --global --add safe.directory "$(pwd)"
 # gh runs git, so we need to set the safe.directory in order for it to work
-gh release download --clobber --pattern 'files.tag.gz'
+gh release download --clobber --pattern 'files.tar.gz'
 # but later on vscode will try setting global git config (credential helper, etc) ONLY if gitconfig doesn't exist
 if [ ! $gitconfig_existed ]; then
   rm ~/.gitconfig
