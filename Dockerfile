@@ -13,7 +13,7 @@ RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
     && pecl install redis zip \
     && docker-php-ext-enable redis zip \
     && apt-get install -y mariadb-client redis-tools \
-    && apt-get install -y gh npm libgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev libnss3 libxss1 libasound2 libxtst6 xauth xvfb \
+    && apt-get install -y npm libgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev libnss3 libxss1 libasound2 libxtst6 xauth xvfb \
     && apt-get clean -y && rm -rf /var/lib/apt/lists/*
 
 # Configure PHP, make memory_limit and upload_max_filesize match Pantheon
@@ -52,3 +52,6 @@ RUN curl -sL $(curl -s https://api.github.com/repos/atuinsh/atuin/releases/lates
 # Install the jira-cli precompiled binary for our cpu architecture:
 # FIXME use latest release instead, see atuin example above
 RUN curl -sL https://github.com/ankitpokhrel/jira-cli/releases/download/v1.5.1/jira_1.5.1_linux_`uname -m | sed s/aarch64/arm64/`.tar.gz | tar zx --no-same-owner --wildcards --absolute-names --transform 's,[^/]*,/usr/local,' '*/bin/jira'
+
+# Our base image has an ancient version of gh cli in apt, so we download the latest version instead
+RUN curl -sL $(curl -s https://api.github.com/repos/cli/cli/releases/latest | jq -r '.assets[] | select(.name | endswith("_linux_'`uname -m | sed s/x86_64/amd64/`'.tar.gz")) | .browser_download_url') | tar zx --no-same-owner --wildcards --absolute-names --transform 's,[^/]*,/usr/local,' '*/gh'
