@@ -19,30 +19,23 @@ composer install
 # re-build the theme (likewise in case of changes)
 composer compile-theme
 
-# during first run, the new PATH from the on-create script is not yet in effect
-if ( ! command -v drush > /dev/null ); then
-  export PATH="`pwd`/vendor/bin:$PATH"
-fi
+# download pantheon backups
+export TERMINUS_ENV="dev"
+FILES_BACKUP=$(mktemp --dry-run files-XXXXXX.tar.gz)
+DATABASE_BACKUP=$(mktemp --dry-run database-XXXXXX.sql.gz)
+terminus backup:get --element=files --to=$FILES_BACKUP
+terminus backup:get --element=db --to=$DATABASE_BACKUP
 
-# FIXME
-# this script used to download database/files from github packages
-# now we need to download from pantheon backups instead
-# tar zx --no-same-permissions --strip-components 1 -C web/sites/default/files -f files.tar.gz
-# rm files.tar.gz
+rm -rf web/sites/default/files
+mkdir web/sites/default/files
+chgrp www-data web/sites/default/files
+chmod 2775 web/sites/default/files
+tar zx --no-same-permissions --strip-components 1 -C web/sites/default/files -f $FILES_BACKUP
+# no-same-permissions doesn't seem to work so we fix it here
+sudo find web/sites/default/files -type d -exec chmod g+ws {} +
+sudo find web/sites/default/files -type f -exec chmod g+w {} +
 
-# # no-same-permissions doesn't seem to work so we fix it here
-# sudo find web/sites/default/files -type d -exec chmod g+ws {} +
-# sudo find web/sites/default/files -type f -exec chmod g+w {} +
+build/db-rebuild.sh $DATABASE_BACKUP
 
-# the first time we run this script the default umask is still in effect,
-# which messes up permissions on the profiler directory that gets created when the caches are rebuilt by db-rebuild.sh
-umask 002
-
-sudo service mariadb start
-# build/db-rebuild.sh database.sql.gz
-# rm database.sql.gz
-
-# Run local devcontainer lifecycle scripts
-if [ -x .devcontainer/updateContent.sh ]; then
-  .devcontainer/updateContent.sh
-fi
+rm $FILES_BACKUP
+rm $DATABASE_BACKUP
