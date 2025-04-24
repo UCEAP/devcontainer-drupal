@@ -49,9 +49,5 @@ COPY vscode-*.json /usr/local/etc/uceap-dev
 # # So instead we download the latest precompiled binary for our cpu architecture:
 RUN curl -sL $(curl -s https://api.github.com/repos/atuinsh/atuin/releases/latest | jq -r '.assets[] | select(.name == "atuin-'`uname -m`'-unknown-linux-gnu.tar.gz") | .browser_download_url') | tar zx --no-same-owner --wildcards --absolute-names --transform 's,[^/]*,/usr/local/bin,' '*/atuin'
 
-# Install the jira-cli precompiled binary for our cpu architecture:
-# FIXME use latest release instead, see atuin example above
-RUN curl -sL https://github.com/ankitpokhrel/jira-cli/releases/download/v1.5.1/jira_1.5.1_linux_`uname -m | sed s/aarch64/arm64/`.tar.gz | tar zx --no-same-owner --wildcards --absolute-names --transform 's,[^/]*,/usr/local,' '*/bin/jira'
-
 # Our base image has an ancient version of gh cli in apt, so we download the latest version instead
 RUN curl -sL $(curl -s https://api.github.com/repos/cli/cli/releases/latest | jq -r '.assets[] | select(.name | endswith("_linux_'`uname -m | sed s/aarch64/arm64/ | sed s/x86_64/amd64/`'.tar.gz")) | .browser_download_url') | tar zx --no-same-owner --wildcards --absolute-names --transform 's,[^/]*,/usr/local,' '*/gh'
