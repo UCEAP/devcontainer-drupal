@@ -2,13 +2,6 @@ A docker image supporting [GitHub Codespaces](https://github.com/features/codesp
 
 Refer to the UCEAP Software Engineering Playbook for more information on how to [setup your development environment](https://itse-playbook.uceap.work/fundamentals/setup-your-development-environment/).
 
-## Personalization
-
-Devcontainers support dotfiles!
-
-See the [GitHub documentation](https://docs.github.com/en/codespaces/setting-your-user-preferences/personalizing-github-codespaces-for-your-account#dotfiles) for more info, and check out [Brandt's personal dotfiles](https://github.com/kurowski/dotfiles) for an example.
-
-Visual Studio Code users should also look into the settings available in the Dev Containers extension, such as [Default Extensions](vscode://settings/dev.containers.defaultExtensions) to automatically install your favorite extensions in devcontainers.
 
 ## Helper script
 
@@ -32,3 +25,11 @@ I frequently invoke `uceap refresh-content` to reset my local environment after 
 Sometimes a process can die or port forwarding can fail. `uceap devcontainer-post-start` runs a few commands that should get things working again. (Again, shell completion makes this `uce<TAB>post-s<TAB>`).
 
 Using devcontainers facilitates treating local environments as ephemeral: they're quick and easy to set up. Treat them as safe to destroy because you can always create a new one (or multiple new ones, to suit your needs). One thing you might miss is your shell history. Check out [Atuin](https://atuin.sh/) to sync your shell history across environments. `Control-R` has never looked so good 😎
+
+## Personalization
+
+Devcontainers support dotfiles!
+
+See the [GitHub documentation](https://docs.github.com/en/codespaces/setting-your-user-preferences/personalizing-github-codespaces-for-your-account#dotfiles) for more info, and check out [Brandt's personal dotfiles](https://github.com/kurowski/dotfiles) for an example.
+
+Visual Studio Code users should also look into the settings available in the Dev Containers extension, such as [Default Extensions](vscode://settings/dev.containers.defaultExtensions) to automatically install your favorite extensions in devcontainers.
