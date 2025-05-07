@@ -47,7 +47,5 @@ RUN curl -sL $(curl -s https://api.github.com/repos/atuinsh/atuin/releases/lates
 # Our base image has an ancient version of gh cli in apt, so we download the latest version instead
 RUN curl -sL $(curl -s https://api.github.com/repos/cli/cli/releases/latest | jq -r '.assets[] | select(.name | endswith("_linux_'`uname -m | sed s/aarch64/arm64/ | sed s/x86_64/amd64/`'.tar.gz")) | .browser_download_url') | tar zx --no-same-owner --wildcards --absolute-names --transform 's,[^/]*,/usr/local,' '*/gh'
 
-RUN curl -sL $(curl -s https://api.github.com/repos/cli/cli/releases/latest | jq -r '.assets[] | select(.name | endswith("_linux_'`uname -m | sed s/aarch64/arm64/ | sed s/x86_64/amd64/`'.tar.gz")) | .browser_download_url') | tar zx --no-same-owner --wildcards --absolute-names --transform 's,[^/]*,/usr/local,' '*/gh'
-
 # Copy our scripts and template files
 COPY local /usr/local/
