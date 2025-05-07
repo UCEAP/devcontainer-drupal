@@ -48,6 +48,12 @@ function devcontainer_on_create() {
 	mkdir -p $WORKSPACE_FOLDER/.vscode
 	cp /usr/local/share/vscode/* $WORKSPACE_FOLDER/.vscode/
 
+	# Setup shell completion
+	uceap completion bash | sudo sh -c "cat > /etc/bash_completion.d/uceap"
+	uceap completion zsh | sudo sh -c "cat > /usr/local/share/zsh/site-functions/_uceap"
+	# Force loading of the completion script because I can't get it to autoload
+	echo "autoload -Uz _uceap && compdef _uceap uceap" >> ~/.zshrc
+
 	# Run local devcontainer lifecycle scripts
 	if [ -x .devcontainer/onCreate.sh ]; then
 		.devcontainer/onCreate.sh

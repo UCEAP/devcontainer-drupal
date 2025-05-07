@@ -5,9 +5,9 @@ RUN sed -i 's/^UMASK\s*022/UMASK 002/' /etc/login.defs
 RUN usermod -aG www-data vscode
 
 # Add glow for formatting command usage output (and because it's just nice)
-sudo mkdir -p /etc/apt/keyrings
-curl -fsSL https://repo.charm.sh/apt/gpg.key | sudo gpg --dearmor -o /etc/apt/keyrings/charm.gpg
-echo "deb [signed-by=/etc/apt/keyrings/charm.gpg] https://repo.charm.sh/apt/ * *" | sudo tee /etc/apt/sources.list.d/charm.list
+RUN mkdir -p /etc/apt/keyrings \
+    && curl -fsSL https://repo.charm.sh/apt/gpg.key | gpg --dearmor -o /etc/apt/keyrings/charm.gpg \
+    && echo "deb [signed-by=/etc/apt/keyrings/charm.gpg] https://repo.charm.sh/apt/ * *" | tee /etc/apt/sources.list.d/charm.list
 
 # Install MariaDB and Redis and PHP (incl Apache) and Cypress dependencies
 RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \

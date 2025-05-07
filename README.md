@@ -22,7 +22,7 @@ I frequently invoke `uceap refresh-content` to reset my local environment after 
 > drush $DRUSH_TASK
 > ```
 
-Sometimes a process can die or port forwarding can fail. `uceap devcontainer-post-start` runs a few commands that should get things working again. (Again, shell completion makes this `uce<TAB>post-s<TAB>`).
+Sometimes a process can die or port forwarding can fail. `uceap devcontainer-post-start` runs a few commands that should get things working again. (Again, shell completion makes this `uce<TAB>sta<TAB>`).
 
 Using devcontainers facilitates treating local environments as ephemeral: they're quick and easy to set up. Treat them as safe to destroy because you can always create a new one (or multiple new ones, to suit your needs). One thing you might miss is your shell history. Check out [Atuin](https://atuin.sh/) to sync your shell history across environments. `Control-R` has never looked so good 😎
 
