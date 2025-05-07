@@ -29,6 +29,8 @@ function _help() {
 }
 _help_desc='Displays help for `uceap` commands'
 _help_help='
+Show help for UCEAP CLI commands.
+
 # Usage
 
 ``` sh

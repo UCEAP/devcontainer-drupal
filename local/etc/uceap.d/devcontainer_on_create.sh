@@ -54,6 +54,11 @@ function devcontainer_on_create() {
 	fi
 }
 
-_devcontainer_on_create_desc="Runs when the devcontainer is created"
-_devcontainer_on_create_help="
-"
+_devcontainer_on_create_desc='Runs when the devcontainer is created'
+_devcontainer_on_create_help='
+This command implements the `onCreateCommand` lifecycle event for dev containers.
+
+This command is the first of three (along with `updateContentCommand` and `postCreateCommand`) that finalizes container setup when a dev container is created. It and subsequent commands execute **inside** the container immediately after it has started for the first time.
+
+Cloud services can use this command when caching or prebuilding a container. This means that it will not typically have access to user-scoped assets or secrets.
+'
