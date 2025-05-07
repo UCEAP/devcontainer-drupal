@@ -4,6 +4,11 @@ FROM mcr.microsoft.com/devcontainers/php:8.3
 RUN sed -i 's/^UMASK\s*022/UMASK 002/' /etc/login.defs
 RUN usermod -aG www-data vscode
 
+# Add glow for formatting command usage output (and because it's just nice)
+sudo mkdir -p /etc/apt/keyrings
+curl -fsSL https://repo.charm.sh/apt/gpg.key | sudo gpg --dearmor -o /etc/apt/keyrings/charm.gpg
+echo "deb [signed-by=/etc/apt/keyrings/charm.gpg] https://repo.charm.sh/apt/ * *" | sudo tee /etc/apt/sources.list.d/charm.list
+
 # Install MariaDB and Redis and PHP (incl Apache) and Cypress dependencies
 RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
     && apt-get install -y libpng-dev libzip-dev libicu-dev \
@@ -14,7 +19,7 @@ RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
     && docker-php-ext-enable redis zip \
     && apt-get install -y mariadb-client redis-tools \
     && apt-get install -y npm libgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev libnss3 libxss1 libasound2 libxtst6 xauth xvfb \
-    && apt-get install -y dnsutils pv \
+    && apt-get install -y dnsutils glow pv \
     && apt-get clean -y && rm -rf /var/lib/apt/lists/*
 
 # Configure PHP, make memory_limit and upload_max_filesize match Pantheon
