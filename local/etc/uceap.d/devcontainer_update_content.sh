@@ -20,7 +20,19 @@ _devcontainer_update_content_desc='Runs when the devcontainer needs to update co
 _devcontainer_update_content_help='
 This command implements the `updateContentCommand` lifecycle event for dev containers.
 
-This is the second of three that finalizes container setup when a dev container is created. It executes inside the container after `onCreateCommand` whenever new content is available in the source tree during the creation process.
+# Usage
+
+Add the following to your `devcontainer.json` file:
+
+``` json
+{
+	"updateContentCommand": "uceap devcontainer-update-content"
+}
+```
+
+## Description
+
+This command is the second of three that finalizes container setup when a dev container is created. It executes inside the container after `onCreateCommand` whenever new content is available in the source tree during the creation process.
 
 It will execute at least once, but cloud services will also periodically execute the command to refresh cached or prebuilt containers. Like cloud services using `onCreateCommand`, it can only take advantage of repository and org scoped secrets or permissions.
 '

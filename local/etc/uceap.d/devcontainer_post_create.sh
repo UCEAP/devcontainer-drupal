@@ -38,7 +38,19 @@ _devcontainer_post_create_desc='Runs after the devcontainer is created'
 _devcontainer_post_create_help='
 This command implements the `postCreateCommand` lifecycle event for dev containers.
 
-This is the last of three that finalizes container setup when a dev container is created. It happens after `updateContentCommand` and once the dev container has been assigned to a user for the first time.
+# Usage
+
+Add the following to your `devcontainer.json` file:
+
+``` json
+{
+	"postCreateCommand": "uceap devcontainer-post-create"
+}
+```
+
+## Description
+
+This command is the last of three that finalizes container setup when a dev container is created. It happens after `updateContentCommand` and once the dev container has been assigned to a user for the first time.
 
 Cloud services can use this command to take advantage of user specific secrets and permissions.
 '

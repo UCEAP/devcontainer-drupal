@@ -12,5 +12,18 @@ _devcontainer_post_start_desc='Runs after the devcontainer is started'
 _devcontainer_post_start_help='
 This command implements the `postStartCommand` lifecycle event for dev containers.
 
-This is run each time the container is successfully started.
+# Usage
+
+Add the following to your `devcontainer.json` file:
+
+``` json
+{
+	"postStartCommand": "uceap devcontainer-post-start"
+}
+```
+
+## Description
+
+
+This command is run each time the container is successfully started.
 '
