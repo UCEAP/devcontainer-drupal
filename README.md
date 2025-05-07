@@ -16,7 +16,9 @@ This image includes a helper script that provides several commands to support fe
 
 To see a list of available commands, run `uceap` in the terminal. You can also run `uceap help <command>` to see more information about a specific command.
 
-For example, I frequently invoke `uceap refresh-content` to reset my local environment after switching branches. It runs `composer install` and invokes `db-rebuild.sh` with a fresh copy of the latest snapshot of the dev environment database and files. With shell completions installed, it's as easy as `uce<TAB>r<TAB>`.
+## Tips and tricks
+
+I frequently invoke `uceap refresh-content` to reset my local environment after switching branches. It runs `composer install` and invokes `db-rebuild.sh` with a fresh copy of the latest snapshot of the dev environment database and files. With shell completions installed, it's as easy as `uce<TAB>r<TAB>`.
 
 > 👉 When working on a PR that adds update hooks or makes config changes, it's generally a good idea to make sure it applies cleanly to a database matching the QA environment. To do this, switch to the `qa` branch, run refresh-content, switch back to your branch, and run the deploy command (e.g. `drush md` for the portal):
 > ``` zsh
