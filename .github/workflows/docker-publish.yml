@@ -59,13 +59,24 @@ jobs:
 
       # Extract metadata (tags, labels) for Docker
       # https://github.com/docker/metadata-action
-      - name: Extract Docker metadata
+      - name: Extract Docker metadata for PR
         id: meta
+        if: github.event_name == 'pull_request'
         uses: docker/metadata-action@v5
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-          tags: |
-            ${{ github.event_name == 'pull_request' ? 'pr-' + github.event.pull_request.number : steps.meta.outputs.tags }}
+          tags:
+            "pr-${{ github.event.pull_request.number }}"
+
+      - name: Extract Docker metadata for push
+        id: meta
+        if: github.event_name == 'push'
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags:
+            "latest"
+            "${{ github.sha }}"
 
       # Build and push Docker image with Buildx
       # https://github.com/docker/build-push-action
