@@ -60,7 +60,7 @@ function devcontainer_on_create() {
 	fi
 }
 
-_devcontainer_on_create_desc='Runs when the devcontainer is created'
+_devcontainer_on_create_desc='runs when the devcontainer is created'
 _devcontainer_on_create_help='
 This command implements the `onCreateCommand` lifecycle event for dev containers.
 

@@ -25,12 +25,25 @@ function refresh_content() {
 	rm $DATABASE_BACKUP
 }
 
-_refresh_content_desc="runs composer install, then refreshes the local files and database"
+_refresh_content_desc='refreshes code, files, and database'
+_refresh_content_help='
+Refreshes local code, files, and database.
 
-_refresh_content_help="
+# Usage
+
+``` bash
+uceap refresh-content
+```
+
+## Description
+
 This command is useful when switching branches.
+
 First it runs composer install, in case the new branch has updated dependencies.
+
 It also compiles the theme, in case there are any changes to the theme between branches.
+
 Then it downloads the latest backups from DEV and replaces the local files and database with them.
+
 Finally, it rebuilds the database using the new database backup.
-"
+'

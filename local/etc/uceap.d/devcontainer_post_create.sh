@@ -34,7 +34,7 @@ function devcontainer_post_create() {
 	fi
 }
 
-_devcontainer_post_create_desc='Runs after the devcontainer is created'
+_devcontainer_post_create_desc='runs after the devcontainer is created'
 _devcontainer_post_create_help='
 This command implements the `postCreateCommand` lifecycle event for dev containers.
 

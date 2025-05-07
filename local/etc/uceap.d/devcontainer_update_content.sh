@@ -16,7 +16,7 @@ function devcontainer_update_content() {
 	fi
 }
 
-_devcontainer_update_content_desc='Runs when the devcontainer needs to update content'
+_devcontainer_update_content_desc='runs when the devcontainer needs to update content'
 _devcontainer_update_content_help='
 This command implements the `updateContentCommand` lifecycle event for dev containers.
 
