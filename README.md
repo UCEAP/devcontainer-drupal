@@ -10,30 +10,23 @@ See the [GitHub documentation](https://docs.github.com/en/codespaces/setting-you
 
 Visual Studio Code users should also look into the settings available in the Dev Containers extension, such as [Default Extensions](vscode://settings/dev.containers.defaultExtensions) to automatically install your favorite extensions in devcontainers.
 
-## Quality of life
+## Helper script
 
-This image includes several scripts that integrate with the devcontainer lifecycle, but these can also be used independently:
+This image includes a helper script that provides several commands to support features offered by this container. Some of these commands provide implementations for devcontainer lifecycle hooks, but others provide functionality to support the local developer experience. More commands will be added soon to support the deployment process.
 
-* `/usr/local/bin/uceap-drupal-dev-on-create`
-* `/usr/local/bin/uceap-drupal-dev-post-create`
-* `/usr/local/bin/uceap-drupal-dev-post-start`
-* `/usr/local/bin/uceap-drupal-dev-update-content`
+To see a list of available commands, run `uceap` in the terminal. You can also run `uceap help <command>` to see more information about a specific command.
 
-It also includes one that doesn't fit into the devcontainer lifecycle, but performs similar tasks:
-
-* `/usr/local/bin/uceap-drupal-dev-refresh-content`
-
-I frequently invoke `uceap-drupal-dev-refresh-content` to reset my local environment after switching branches. It runs `composer install` and invokes `db-rebuild.sh` with a fresh copy of the latest snapshot of the dev environment database and files. With zsh completions installed, it's as easy as `dev-re<TAB>`.
+For example, I frequently invoke `uceap refresh-content` to reset my local environment after switching branches. It runs `composer install` and invokes `db-rebuild.sh` with a fresh copy of the latest snapshot of the dev environment database and files. With shell completions installed, it's as easy as `uce<TAB>r<TAB>`.
 
 > 👉 When working on a PR that adds update hooks or makes config changes, it's generally a good idea to make sure it applies cleanly to a database matching the QA environment. To do this, switch to the `qa` branch, run refresh-content, switch back to your branch, and run the deploy command (e.g. `drush md` for the portal):
 > ``` zsh
 > git checkout qa
-> uceap-drupal-dev-refresh-content
+> uceap refresh-content
 > git checkout -
 > composer install
 > drush $DRUSH_TASK
 > ```
 
-Sometimes a process can die or port forwarding can fail. `uceap-drupal-dev-post-start` runs a few commands that should get things working again. (Again, zsh shell completion makes this `post-s<TAB>`).
+Sometimes a process can die or port forwarding can fail. `uceap devcontainer-post-start` runs a few commands that should get things working again. (Again, shell completion makes this `uce<TAB>post-s<TAB>`).
 
-Using devcontainers faciliates treating local environments as ephemeral: they're quick and easy to setup. Treat them as safe to destroy because you can always create a new one (or multiple new ones, to suit your needs). One thing you might miss is your shell history. Check out [Atuin](https://atuin.sh/) to sync your shell history across environments. `Control-R` has never looked so good 😎
+Using devcontainers facilitates treating local environments as ephemeral: they're quick and easy to set up. Treat them as safe to destroy because you can always create a new one (or multiple new ones, to suit your needs). One thing you might miss is your shell history. Check out [Atuin](https://atuin.sh/) to sync your shell history across environments. `Control-R` has never looked so good 😎
