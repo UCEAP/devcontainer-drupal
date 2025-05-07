@@ -1,5 +1,3 @@
-#!/bin/bash
-
 alias uceap-drupal-dev-refresh-content="uceap refresh-content"
 alias uceap-drupal-dev-on-create="uceap devcontainer-on-create"
 alias uceap-drupal-dev-post-create="uceap devcontainer-post-create"
