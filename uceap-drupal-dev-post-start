@@ -1,6 +1,0 @@
-#!/bin/bash
-
-# Run local devcontainer lifecycle scripts
-if [ -x .devcontainer/postStart.sh ]; then
-  .devcontainer/postStart.sh
-fi

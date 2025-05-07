@@ -1,0 +1,222 @@
+#!/bin/bash
+
+alias uceap-drupal-dev-refresh-content="uceap refresh-content"
+alias uceap-drupal-dev-on-create="uceap devcontainer-on-create"
+alias uceap-drupal-dev-post-create="uceap devcontainer-post-create"
+alias uceap-drupal-dev-post-start="uceap devcontainer-post-start"
+alias uceap-drupal-dev-update-content="uceap devcontainer-update-content"
+
+function uceap() {
+	set -eo pipefail
+
+	if [[ $# -lt 2 ]]; then
+		cat <<-EOF
+			Usage: uceap [command] [args]
+
+			Commands:
+				refresh-content
+
+			Devcontainer lifecycle hooks:
+				devcontainer-on-create
+				devcontainer-post-create
+				devcontainer-post-start
+				devcontainer-update-content
+		EOF
+		return 1
+	else
+		case $1 in
+			refresh-content)
+				_uceap_refresh_content
+				;;
+			devcontainer-on-create)
+				_uceap_devcontainer_on_create
+				;;
+			devcontainer-post-create)
+				_uceap_devcontainer_post_create
+				;;
+			devcontainer-post-start)
+				_uceap_devcontainer_post_start
+				;;
+			devcontainer-update-content)
+				_uceap_devcontainer_update_content
+				;;
+			*)
+				echo "Unknown command: $1"
+				return 1
+				;;
+		esac
+	fi
+}
+
+function _uceap_refresh_content() {
+	# ensure we're working in the workspace folder
+	if [ -n "$WORKSPACE_FOLDER" ]; then
+		cd $WORKSPACE_FOLDER
+	else
+		echo "No WORKSPACE_FOLDER environment variable set, please update your devcontainer.json file."
+		# as a transitional fallback, check to see if composer.json exists in the current directory, in which case we assume we're in the workspace folder
+		if [ ! -f composer.json ]; then
+			echo "No composer.json found in the current directory, please run this script from the root of your project."
+			exit 1
+		fi
+	fi
+
+	# re-run composer install (e.g. in case we've switched branches since last time we ran this script)
+	composer install
+
+	# re-build the theme (likewise in case of changes)
+	composer compile-theme
+
+	# download pantheon backups
+	export TERMINUS_ENV="dev"
+	FILES_BACKUP=$(mktemp --dry-run files-XXXXXX.tar.gz)
+	DATABASE_BACKUP=$(mktemp --dry-run database-XXXXXX.sql.gz)
+	terminus backup:get --element=files --to=$FILES_BACKUP
+	terminus backup:get --element=db --to=$DATABASE_BACKUP
+
+	rm -rf web/sites/default/files
+	mkdir web/sites/default/files
+	chgrp www-data web/sites/default/files
+	chmod 2775 web/sites/default/files
+	tar zx --no-same-permissions --strip-components 1 -C web/sites/default/files -f $FILES_BACKUP
+	# no-same-permissions doesn't seem to work so we fix it here
+	sudo find web/sites/default/files -type d -exec chmod g+ws {} +
+	sudo find web/sites/default/files -type f -exec chmod g+w {} +
+
+	build/db-rebuild.sh $DATABASE_BACKUP
+
+	rm $FILES_BACKUP
+	rm $DATABASE_BACKUP
+}
+
+
+function _uceap_devcontainer_on_create() {
+	# Change default umask and add user to web group so we can share write permission on web files
+	sed -i 's/^#umask\s*022/umask 002/' ~/.profile
+	echo "umask 002" >> ~/.zshrc
+	echo "umask 002" >> ~/.bashrc
+
+	sudo sh -c "cat >> /etc/apache2/sites-available/000-default.conf" <<-EOF
+	<Directory /var/www/html>
+		AllowOverride All
+	</Directory>
+	EOF
+
+	# This is how the example codespace changes the docroot. If it's good enough for them, it's good enough for me.
+	sudo chmod a+x "$(pwd)" && sudo rm -rf /var/www/html && sudo ln -s "$(pwd)/web" /var/www/html
+
+	# Setup database if MYSQL_HOST = 127.0.0.1
+	cat > ~/.my.cnf <<-EOF
+	[client]
+	host="$MYSQL_HOST"
+	user="$MYSQL_USER"
+	password="$MYSQL_PASSWORD"
+	EOF
+
+	# translate mysql env vars to our template vars
+	export DB_HOST="$MYSQL_HOST" DB_PORT="$MYSQL_TCP_PORT" DB_USER="$MYSQL_USER" DB_PASSWORD="$MYSQL_PASSWORD" DB_NAME="$MYSQL_DATABASE"
+
+	# Setup our Drupal app
+	composer dev-initialize-local
+	cat >> web/sites/default/settings.local.php <<-EOF
+	\$settings['trusted_host_patterns'] = [];
+
+	# make drupal play nice with codespace proxy
+	\$settings['reverse_proxy'] = TRUE;
+	\$settings['reverse_proxy_addresses'] = array(\$_SERVER['REMOTE_ADDR']);
+	EOF
+
+	composer install
+	composer compile-theme
+
+	# Set file permissions so both httpd and user can write to files
+	chgrp www-data web/sites/default/files
+	chmod g+s web/sites/default/files
+
+	# Setup drush and other vendor binaries
+	echo "export PATH=\"`pwd`/vendor/bin:\$PATH\"" | tee -a ~/.bashrc ~/.zshrc ~/.zshrc.local
+
+	# Setup VS Code
+	mkdir -p $WORKSPACE_FOLDER/.vscode
+	cp /usr/local/share/uceap/vscode/* $WORKSPACE_FOLDER/.vscode/
+
+	# Run local devcontainer lifecycle scripts
+	if [ -x $WORKSPACE_FOLDER/.devcontainer/onCreate.sh ]; then
+		$WORKSPACE_FOLDER/.devcontainer/onCreate.sh
+	fi
+}
+
+function _uceap_devcontainer_post_create() {
+	# Authenticate to Pantheon iff the user set a token env var
+	if [[ -n "$TERMINUS_TOKEN" ]]; then
+		terminus -n auth:login --machine-token="$TERMINUS_TOKEN"
+	fi
+
+	# Install GitHub CLI Copilot Extension
+	if [[ -n "$GH_TOKEN" ]] || [[ -n "$GITHUB_TOKEN" ]] ; then
+		gh extension install github/gh-copilot
+	fi
+
+	# set global ServerName so that apachectl isn't chatty
+	if [[ -n "$CODESPACE_NAME" ]]; then
+		SERVER_NAME="$CODESPACE_NAME-8080.app.github.dev"
+		HTTP_ADDRESS="$SERVER_NAME"
+		HTTP_PROTOCOL="https"
+	else
+		SERVER_NAME="localhost"
+		HTTP_ADDRESS="$SERVER_NAME:8080"
+		HTTP_PROTOCOL="http"
+	fi
+	echo "ServerName $SERVER_NAME" | sudo tee /etc/apache2/conf-available/global-servername.conf
+	sudo a2enconf global-servername
+
+	# Setup drush
+	mkdir -p drush
+	export HTTP_ADDRESS
+	export HTTP_PROTOCOL
+	build/templater.sh /usr/local/share/uceap/example.drush.yml > drush/drush.yml
+
+	# Run local devcontainer lifecycle scripts
+	if [ -x $WORKSPACE_FOLDER/.devcontainer/postCreate.sh ]; then
+		$WORKSPACE_FOLDER/.devcontainer/postCreate.sh
+	fi
+}
+
+function _uceap_devcontainer_post_start() {
+
+	# ...no generic behavior for this lifecycle hook...
+
+	# Run local devcontainer lifecycle scripts
+	if [ -x $WORKSPACE_FOLDER/.devcontainer/postStart.sh ]; then
+		$WORKSPACE_FOLDER/.devcontainer/postStart.sh
+	fi
+}
+
+function _uceap_devcontainer_update_content() {
+	# ensure we're working in the workspace folder
+	if [ -n "$WORKSPACE_FOLDER" ]; then
+		cd $WORKSPACE_FOLDER
+	else
+		echo "No WORKSPACE_FOLDER environment variable set, please update your devcontainer.json file."
+		# as a transitional fallback, check to see if composer.json exists in the current directory, in which case we assume we're in the workspace folder
+		if [ ! -f composer.json ]; then
+			echo "No composer.json found in the current directory, please run this script from the root of your project."
+			exit 1
+		fi
+	fi
+
+	# during first run, the new PATH from the on-create script is not yet in effect
+	if ( ! command -v drush > /dev/null ); then
+		export PATH="`pwd`/vendor/bin:$PATH"
+	fi
+
+	# the first time we run this script the default umask is still in effect,
+	# which messes up permissions on the profiler directory that gets created when the caches are rebuilt by db-rebuild.sh
+	umask 002
+
+	# Run local devcontainer lifecycle scripts
+	if [ -x .devcontainer/updateContent.sh ]; then
+		.devcontainer/updateContent.sh
+	fi
+}
+
