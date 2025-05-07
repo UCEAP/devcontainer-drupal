@@ -48,15 +48,6 @@ function devcontainer_on_create() {
 	mkdir -p $WORKSPACE_FOLDER/.vscode
 	cp /usr/local/share/vscode/* $WORKSPACE_FOLDER/.vscode/
 
-	# Add aliases to ease transition
-	cat > ~/.bash_aliases <<-EOF
-	alias uceap-drupal-dev-refresh-content="uceap refresh-content"
-	alias uceap-drupal-dev-on-create="uceap devcontainer-on-create"
-	alias uceap-drupal-dev-post-create="uceap devcontainer-post-create"
-	alias uceap-drupal-dev-post-start="uceap devcontainer-post-start"
-	alias uceap-drupal-dev-update-content="uceap devcontainer-update-content"
-	EOF
-
 	# Run local devcontainer lifecycle scripts
 	if [ -x .devcontainer/onCreate.sh ]; then
 		.devcontainer/onCreate.sh
