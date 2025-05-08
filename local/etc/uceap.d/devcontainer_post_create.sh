@@ -23,7 +23,7 @@ function devcontainer_post_create() {
 	export HTTP_PROTOCOL
 	build/templater.sh /usr/local/share/drush/example.drush.yml > drush/drush.yml
 
-	# set ports to be publicly accessible
+	# set httpd port to be publicly accessible
 	if [[ -n "$CODESPACE_NAME" ]]; then
 		gh codespace ports visibility 8080:public -c $CODESPACE_NAME
 	fi
