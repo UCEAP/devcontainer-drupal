@@ -5,7 +5,11 @@ Refer to the UCEAP Software Engineering Playbook for more information on how to 
 
 ## Helper script
 
-This image includes a helper script that provides several commands to support features offered by this container. Some of these commands provide implementations for devcontainer lifecycle hooks, but others provide functionality to support the local developer experience. More commands will be added soon to support the deployment process.
+This image includes a helper script that provides several commands to support features offered by this container. There are three main types of commands:
+
+- __deploy-*__: perform deployments to various environments
+- __devcontainer-*__: implementations of devcontainer lifecycle hooks
+- _all others_: functionality to support the local developer experience
 
 To see a list of available commands, run `uceap` in the terminal. You can also run `uceap help <command>` to see more information about a specific command.
 
