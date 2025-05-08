@@ -4,6 +4,11 @@ FROM mcr.microsoft.com/devcontainers/php:8.3
 RUN sed -i 's/^UMASK\s*022/UMASK 002/' /etc/login.defs
 RUN usermod -aG www-data vscode
 
+# Add glow for formatting command usage output (and because it's just nice)
+RUN mkdir -p /etc/apt/keyrings \
+    && curl -fsSL https://repo.charm.sh/apt/gpg.key | gpg --dearmor -o /etc/apt/keyrings/charm.gpg \
+    && echo "deb [signed-by=/etc/apt/keyrings/charm.gpg] https://repo.charm.sh/apt/ * *" | tee /etc/apt/sources.list.d/charm.list
+
 # Install MariaDB and Redis and PHP (incl Apache) and Cypress dependencies
 RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
     && apt-get install -y libpng-dev libzip-dev libicu-dev \
@@ -14,7 +19,7 @@ RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
     && docker-php-ext-enable redis zip \
     && apt-get install -y mariadb-client redis-tools \
     && apt-get install -y npm libgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev libnss3 libxss1 libasound2 libxtst6 xauth xvfb \
-    && apt-get install -y dnsutils pv \
+    && apt-get install -y dnsutils glow pv \
     && apt-get clean -y && rm -rf /var/lib/apt/lists/*
 
 # Configure PHP, make memory_limit and upload_max_filesize match Pantheon
@@ -34,12 +39,6 @@ RUN sed -i 's/Listen\s*80$/# Listen 80/' /etc/apache2/ports.conf
 RUN curl -L https://github.com/pantheon-systems/terminus/releases/latest/download/terminus.phar --output /usr/local/bin/terminus
 RUN chmod +x /usr/local/bin/terminus
 
-# Copy devcontainer scripts
-COPY uceap-drupal-dev-* /usr/local/bin/
-RUN mkdir -p /usr/local/etc/uceap-dev
-COPY example.drush.yml /usr/local/etc/uceap-dev
-COPY vscode-*.json /usr/local/etc/uceap-dev
-
 # Install atuin
 #
 # # The recommended way to install atuin is to use cargo, but that takes *forever*:
@@ -52,3 +51,6 @@ RUN curl -sL $(curl -s https://api.github.com/repos/atuinsh/atuin/releases/lates
 
 # Our base image has an ancient version of gh cli in apt, so we download the latest version instead
 RUN curl -sL $(curl -s https://api.github.com/repos/cli/cli/releases/latest | jq -r '.assets[] | select(.name | endswith("_linux_'`uname -m | sed s/aarch64/arm64/ | sed s/x86_64/amd64/`'.tar.gz")) | .browser_download_url') | tar zx --no-same-owner --wildcards --absolute-names --transform 's,[^/]*,/usr/local,' '*/gh'
+
+# Copy our scripts and template files
+COPY local /usr/local/
