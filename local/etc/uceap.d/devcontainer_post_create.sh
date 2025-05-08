@@ -1,9 +1,4 @@
 function devcontainer_post_create() {
-	# Authenticate to Pantheon iff the user set a token env var
-	if [[ -n "$TERMINUS_TOKEN" ]]; then
-		terminus -n auth:login --machine-token="$TERMINUS_TOKEN"
-	fi
-
 	# Install GitHub CLI Copilot Extension
 	if [[ -n "$GH_TOKEN" ]] || [[ -n "$GITHUB_TOKEN" ]] ; then
 		gh extension install github/gh-copilot

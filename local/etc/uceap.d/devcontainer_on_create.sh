@@ -41,6 +41,16 @@ function devcontainer_on_create() {
 	chgrp www-data web/sites/default/files
 	chmod g+s web/sites/default/files
 
+	# Download files
+	_terminus_login
+	TERMINUS_ENV="dev" terminus backup:get --element=files --to=files.tar.gz
+	tar zx --no-same-permissions --strip-components 1 -C web/sites/default/files -f files.tar.gz
+	rm files.tar.gz
+	# no-same-permissions doesn't seem to work so we fix it here
+	sudo find web/sites/default/files -type d -exec chmod g+ws {} +
+	sudo find web/sites/default/files -type f -exec chmod g+w {} +
+
+
 	# Setup drush and other vendor binaries
 	echo "export PATH=\"`pwd`/vendor/bin:\$PATH\"" | tee -a ~/.bashrc ~/.zshrc ~/.zshrc.local
 
