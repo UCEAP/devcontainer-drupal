@@ -2,7 +2,6 @@ function deploy_to_dev() {
 	export TERMINUS_ENV="dev"
 	_deploy_code
 	terminus env:commit --force -y
-	sleep 60
 	terminus connection:set git -y
 }
 
