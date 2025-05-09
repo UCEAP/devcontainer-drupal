@@ -36,7 +36,7 @@ RUN echo 'xdebug.log_level = 0' >> /usr/local/etc/php/conf.d/xdebug.ini
 RUN sed -i 's/Listen\s*80$/# Listen 80/' /etc/apache2/ports.conf
 
 # Install terminus
-RUN curl -L https://github.com/pantheon-systems/terminus/releases/latest/download/terminus.phar --output /usr/local/bin/terminus
+RUN curl -L https://github.com/pantheon-systems/terminus/releases/download/3.6.2/terminus.phar --output /usr/local/bin/terminus
 RUN chmod +x /usr/local/bin/terminus
 
 # Install atuin
