@@ -1,11 +1,8 @@
 function deploy_to_dev() {
 	export TERMINUS_ENV="dev"
+	_deploy_code
 
-	_assert_terminus_vars
-	_sftp_code
 	terminus env:commit --force -y
-	
-	terminus drush -- $DRUSH_TASK
 }
 
 _deploy_to_dev_desc='deploys the local code to the Pantheon DEV environment'
