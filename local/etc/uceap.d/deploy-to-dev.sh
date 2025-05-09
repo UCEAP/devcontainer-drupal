@@ -6,9 +6,9 @@ function deploy_to_dev() {
 	terminus connection:set git -y
 }
 
-_deploy_to_dev_desc='deploys the local code to the Pantheon DEV environment'
+_deploy_to_dev_desc='deploys code from local filesystem to Pantheon DEV environment'
 _deploy_to_dev_help='
-Deploys the local code to the Pantheon DEV environment.
+Deploys code from local filesystem to the Pantheon DEV environment.
 
 # Usage
 

@@ -14,9 +14,9 @@ function deploy_to_test() {
 	_pantheon_deploy
 }
 
-_deploy_to_test_desc='deploys the local code to the Pantheon TEST environment'
+_deploy_to_test_desc='deploys the code on Pantheon from DEV to TEST'
 _deploy_to_test_help='
-Deploys the local code to the Pantheon TEST environment.
+Deploys the code on Pantheon from DEV to TEST.
 
 # Usage
 

@@ -25,9 +25,9 @@ function refresh_content() {
 	rm $DATABASE_BACKUP
 }
 
-_refresh_content_desc='refreshes code, files, and database'
+_refresh_content_desc='refreshes code, files, and database in devcontainer'
 _refresh_content_help='
-Refreshes local code, files, and database.
+Refreshes local code, files, and database in devcontainer.
 
 # Usage
 

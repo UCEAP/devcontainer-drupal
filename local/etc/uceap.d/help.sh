@@ -24,10 +24,10 @@ function _help() {
 		echo
 	done
 	echo
-	echo 'Please run **uceap \<command\>** to execute a command.'
-	echo 'Please run **uceap help \<command\>** to see the help for a command.'
+	echo 'Please run `uceap <command>` to execute a command.'
+	echo 'Please run `uceap help <command>` to see the help for a command.'
 }
-_help_desc='displays help for `uceap` commands'
+_help_desc='displays help for uceap commands'
 _help_help='
 Show help for UCEAP CLI commands.
 

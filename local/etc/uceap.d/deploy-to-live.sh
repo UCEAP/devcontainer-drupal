@@ -6,9 +6,9 @@ function deploy_to_live() {
 	_pantheon_deploy
 }
 
-_deploy_to_live_desc='deploys the local code to the Pantheon LIVE environment'
+_deploy_to_live_desc='deploys the code on Pantheon from TEST to LIVE'
 _deploy_to_live_help='
-Deploys the local code to the Pantheon LIVE environment.
+Deploys the code on Pantheon from TEST to LIVE.
 
 # Usage
 

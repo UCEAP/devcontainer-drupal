@@ -2,9 +2,9 @@ function deploy_to_multidev() {
 	_deploy_code
 }
 
-_deploy_to_multidev_desc='deploys the local code to a Pantheon multidev'
+_deploy_to_multidev_desc='deploys code from local filesystem to a Pantheon multidev'
 _deploy_to_multidev_help='
-Deploys the local code to a Pantheon multidev.
+Deploys code from local filesystem to a Pantheon multidev.
 
 # Usage
 
