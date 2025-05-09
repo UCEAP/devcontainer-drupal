@@ -1,8 +1,5 @@
 function deploy_to_multidev() {
-	_assert_terminus_vars
-	_sftp_code
-
-	terminus drush -- $DRUSH_TASK
+	_deploy_code
 }
 
 _deploy_to_multidev_desc='deploys the local code to a Pantheon multidev'
