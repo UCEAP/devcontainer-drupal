@@ -10,7 +10,7 @@ function deploy_to_test() {
 			exit 1
 		fi
 	fi
-	
+	_terminus_login
 	_pantheon_deploy
 }
 

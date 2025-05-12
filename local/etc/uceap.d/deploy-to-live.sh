@@ -2,7 +2,7 @@ function deploy_to_live() {
 	export TERMINUS_ENV="live"
 
 	deploy_args=""
-	
+	_terminus_login
 	_pantheon_deploy
 }
 

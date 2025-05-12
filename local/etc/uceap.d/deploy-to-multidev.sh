@@ -1,4 +1,5 @@
 function deploy_to_multidev() {
+	_terminus_login
 	_deploy_code
 }
 

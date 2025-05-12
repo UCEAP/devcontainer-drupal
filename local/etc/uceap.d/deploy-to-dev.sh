@@ -1,5 +1,6 @@
 function deploy_to_dev() {
 	export TERMINUS_ENV="dev"
+	_terminus_login
 	_deploy_code
 	terminus env:commit --force -y
 }
