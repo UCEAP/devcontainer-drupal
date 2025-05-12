@@ -2,7 +2,6 @@ function deploy_to_dev() {
 	export TERMINUS_ENV="dev"
 	_deploy_code
 	terminus env:commit --force -y
-	terminus connection:set git -y
 }
 
 _deploy_to_dev_desc='deploys code from local filesystem to Pantheon DEV environment'
