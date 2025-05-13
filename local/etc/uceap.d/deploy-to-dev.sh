@@ -2,6 +2,7 @@ function deploy_to_dev() {
 	export TERMINUS_ENV="dev"
 	_terminus_login
 	_deploy_code
+	sleep 60 # code sync sometimes takes a while on the distributed filesystem
 	terminus env:commit --force -y
 }
 
