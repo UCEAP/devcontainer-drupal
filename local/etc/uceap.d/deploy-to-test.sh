@@ -22,9 +22,14 @@ Deploys the code on Pantheon from DEV to TEST.
 
 ```bash
 uceap deploy-to-test
+uceap deploy-to-test --no-sync
 ```
 
 ## Description
 
 This command requires the `TERMINUS_SITE` and `DRUSH_TASK` environment variables to be set.
+
+Deploying to TEST will automatically copy database and files from LIVE to TEST.
+
+Add the "--no-sync" argument to skip content synchronization.
 '
