@@ -1,7 +1,7 @@
 function deploy_to_test() {
-	export TERMINUS_ENV="test"
+	export TERMINUS_ENV="tst"
 
-	deploy_args="$deploy_args --sync-content"
+	deploy_args="--sync-content"
 	if [ $# -eq 1 ]; then
 		if [ "$1" = "--no-sync" ]; then
 			deploy_args=""
