@@ -1,5 +1,5 @@
 function deploy_to_test() {
-	export TERMINUS_ENV="tst"
+	export TERMINUS_ENV="test"
 
 	deploy_args="--sync-content"
 	if [ $# -eq 1 ]; then
