@@ -31,5 +31,5 @@ This command requires the `TERMINUS_SITE` and `DRUSH_TASK` environment variables
 
 Deploying to TEST will automatically copy database and files from LIVE to TEST.
 
-Add the "--no-sync" argument to skip content synchronization.
+Add the `--no-sync` argument to skip content synchronization.
 '
