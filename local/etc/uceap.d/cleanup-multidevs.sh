@@ -25,6 +25,6 @@ uceap cleanup-multidevs
 
 This command requires the `TERMINUS_SITE` environment variable to be set.
 
-This command assumes your current working directory is in a Git working copy
-that is checked out from the GitHub repository of the corresponding project.
+This command assumes your current working directory is a checkout of
+corresponding GitHub repository, or that the GH_REPO environment variable isset.
 '
