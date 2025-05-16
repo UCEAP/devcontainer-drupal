@@ -1,10 +1,30 @@
 function completion() {
-    commands=("${funcs[@]//_/-}")
-    if [ $# -eq 1 ]; then
-        shell="$1"
-        case "$shell" in
-            bash)
-                cat <<EOF
+    # Validate arguments
+    if [ $# -ne 1 ]; then
+        echo "[error] Usage: completion <shell>" >&2
+        return 1
+    fi
+
+    # Convert function names to command names (replace _ with -)
+    local commands=("${funcs[@]//_/-}")
+    local shell="$1"
+
+    case "$shell" in
+        bash)
+            _generate_bash_completion "${commands[@]}"
+            ;;
+        zsh)
+            _generate_zsh_completion "${commands[@]}"
+            ;;
+        *)
+            echo "[error] Unsupported shell: $shell" >&2
+            return 1
+            ;;
+    esac
+}
+
+function _generate_bash_completion() {
+    cat <<EOF
 _uceap_completions() {
     local cur prev opts
     COMPREPLY=()
@@ -20,28 +40,26 @@ _uceap_completions() {
 }
 complete -F _uceap_completions uceap
 EOF
-                ;;
-            zsh)
-                echo '_uceap() {
-  local -a commands
-  commands=('"${commands[*]}"')
-  if (( CURRENT == 2 )); then
-    _arguments "1: :((help ${commands[*]}))"
-  elif (( CURRENT == 3 )) && [[ $words[2] == help ]]; then
-    _arguments "2: :(${commands[*]})"
-  fi
 }
-compdef _uceap uceap'
-                ;;
-            *)
-                echo "[error] Unsupported shell: $shell"
-                return 1
-                ;;
-        esac
-    else
-        echo "[error] Invalid number of arguments"
-        return 1
+
+function _generate_zsh_completion() {
+    cat <<EOF
+_uceap() {
+    local -a commands
+    commands=(${commands[*]})
+    if (( CURRENT == 2 )); then
+        _arguments "1: :((help \${commands[*]}))"
+        return
     fi
+    if (( CURRENT == 3 )); then
+        if [[ \$words[2] == help ]]; then
+            _arguments "2: :(\${commands[*]})"
+            return
+        fi
+    fi
+}
+compdef _uceap uceap
+EOF
 }
 
 _completion_desc="generate shell completion scripts"
