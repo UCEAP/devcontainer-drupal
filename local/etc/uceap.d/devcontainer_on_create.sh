@@ -60,7 +60,9 @@ function devcontainer_on_create() {
 
 	# Setup shell completion
 	uceap completion bash | sudo sh -c "cat > /etc/bash_completion.d/uceap"
+	gh completion --shell bash | sudo sh -c "cat > /etc/bash_completion.d/gh"
 	uceap completion zsh | sudo sh -c "cat > /usr/local/share/zsh/site-functions/_uceap"
+	gh completion --shell zsh | sudo sh -c "cat > /usr/local/share/zsh/site-functions/_gh"
 	# Force loading of the completion script because I can't get it to autoload
 	echo "autoload -Uz _uceap && compdef _uceap uceap" >> ~/.zshrc
 
