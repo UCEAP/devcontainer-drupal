@@ -1,24 +1,47 @@
 function completion() {
-	commands=("${funcs[@]//_/-}")
-	if [ $# -eq 1 ]; then
-		shell="$1"
-		case "$shell" in
-			bash)
-  		  echo complete -W \"${commands[*]}\" uceap
-				;;
-			zsh)
-				echo "_uceap() { _arguments \"1: :(${commands[*]})\" }"
-				echo "compdef _uceap uceap"
-				;;
-			*)
-				echo "[error] Unsupported shell: $shell"
-				return 1
-				;;
-		esac
-	else
-		echo "[error] Invalid number of arguments"
-		return 1
-	fi
+    commands=("${funcs[@]//_/-}")
+    if [ $# -eq 1 ]; then
+        shell="$1"
+        case "$shell" in
+            bash)
+                cat <<EOF
+_uceap_completions() {
+    local cur prev opts
+    COMPREPLY=()
+    cur="\${COMP_WORDS[COMP_CWORD]}"
+    prev="\${COMP_WORDS[COMP_CWORD-1]}"
+    opts="${commands[*]}"
+
+    if [[ \$COMP_CWORD -eq 1 ]]; then
+        COMPREPLY=( \$(compgen -W "\$opts help" -- "\$cur") )
+    elif [[ \$COMP_CWORD -eq 2 && "\$prev" == "help" ]]; then
+        COMPREPLY=( \$(compgen -W "\$opts" -- "\$cur") )
+    fi
+}
+complete -F _uceap_completions uceap
+EOF
+                ;;
+            zsh)
+                echo '_uceap() {
+  local -a commands
+  commands=('"${commands[*]}"')
+  if (( CURRENT == 2 )); then
+    _arguments "1: :((help ${commands[*]}))"
+  elif (( CURRENT == 3 )) && [[ $words[2] == help ]]; then
+    _arguments "2: :(${commands[*]})"
+  fi
+}
+compdef _uceap uceap'
+                ;;
+            *)
+                echo "[error] Unsupported shell: $shell"
+                return 1
+                ;;
+        esac
+    else
+        echo "[error] Invalid number of arguments"
+        return 1
+    fi
 }
 
 _completion_desc="generate shell completion scripts"
