@@ -4,7 +4,7 @@ function refresh_content() {
 	composer compile-theme
 
 	# download pantheon backups
-	export TERMINUS_ENV="dev"
+	export TERMINUS_ENV=${TERMINUS_ENV:-"dev"}
 	FILES_BACKUP=$(mktemp --dry-run files-XXXXXX.tar.gz)
 	DATABASE_BACKUP=$(mktemp --dry-run database-XXXXXX.sql.gz)
 	terminus backup:get --element=files --to=$FILES_BACKUP
@@ -33,17 +33,20 @@ Refreshes local code, files, and database in devcontainer.
 
 ``` bash
 uceap refresh-content
+TERMINUS_ENV=live uceap refresh-content
 ```
+
+## Options
+
+This command defaults to using the DEV environment. You can override this by setting the `TERMINUS_ENV` environment variable.
 
 ## Description
 
 This command is useful when switching branches.
 
-First it runs composer install, in case the new branch has updated dependencies.
+First it runs composer install, in case the new branch has updated dependencies. It also compiles the theme, in case there are any changes to the theme between branches.
 
-It also compiles the theme, in case there are any changes to the theme between branches.
-
-Then it downloads the latest backups from DEV and replaces the local files and database with them.
+Then it downloads the latest backups from Pantheon and replaces the local files and database with them.
 
 Finally, it rebuilds the database using the new database backup.
 '
