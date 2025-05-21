@@ -51,7 +51,6 @@ function devcontainer_on_create() {
 	sudo find web/sites/default/files -type f -exec chmod g+w {} +
 
 	# The database image might be out of date so deploy any new changes from code
-	vendor/bin/drush cr
 	vendor/bin/drush deploy
 
 	# Setup drush and other vendor binaries
