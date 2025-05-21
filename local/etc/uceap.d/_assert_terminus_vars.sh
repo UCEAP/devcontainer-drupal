@@ -8,9 +8,4 @@ function _assert_terminus_vars() {
 		echo "TERMINUS_SITE environment variable is not set."
 		exit 1
 	fi
-
-	if [ -z "$DRUSH_TASK" ]; then
-		echo "DRUSH_TASK environment variable is not set."
-		exit 1
-	fi
 }

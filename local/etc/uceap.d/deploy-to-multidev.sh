@@ -15,7 +15,5 @@ TERMINUS_ENV=pr-1234 uceap deploy-to-multidev
 
 ## Description
 
-This command requires the `TERMINUS_SITE` and `DRUSH_TASK` environment variables to be set.
-
-It also requires the `TERMINUS_ENV` environment variable to be set.
+This command requires the `TERMINUS_SITE` and `TERMINUS_ENV` environment variables to be set.
 '

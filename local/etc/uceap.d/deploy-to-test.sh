@@ -27,7 +27,7 @@ uceap deploy-to-test --no-sync
 
 ## Description
 
-This command requires the `TERMINUS_SITE` and `DRUSH_TASK` environment variables to be set.
+This command requires the `TERMINUS_SITE` environment variable to be set.
 
 Deploying to TEST will automatically copy database and files from LIVE to TEST.
 
