@@ -52,7 +52,7 @@ function devcontainer_on_create() {
 
 	# The database image might be out of date so deploy any new changes from code
 	vendor/bin/drush cr
-	vendor/bin/drush $DRUSH_TASK
+	vendor/bin/drush deploy
 
 	# Setup drush and other vendor binaries
 	echo "export PATH=\"`pwd`/vendor/bin:\$PATH\"" | tee -a ~/.bashrc ~/.zshrc ~/.zshrc.local

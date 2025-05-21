@@ -23,7 +23,7 @@ I frequently invoke `uceap refresh-content` to reset my local environment after 
 > uceap refresh-content
 > git checkout -
 > composer install
-> drush $DRUSH_TASK
+> drush deploy
 > ```
 
 Troubleshooting an issue on the live site? `TERMINUS_ENV=live uceap refresh-content` will pull the latest backup of the database and files from LIVE. _You'll be knee-deep in PII in no time!_ **Be sure to reset your database and files with DEV data as soon as you're done.**

@@ -17,5 +17,5 @@ uceap deploy-to-dev
 
 ## Description
 
-This command requires the `TERMINUS_SITE` and `DRUSH_TASK` environment variables to be set.
+This command requires the `TERMINUS_SITE` environment variable to be set.
 '
