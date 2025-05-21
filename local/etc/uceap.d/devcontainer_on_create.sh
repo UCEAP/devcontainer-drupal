@@ -50,6 +50,9 @@ function devcontainer_on_create() {
 	sudo find web/sites/default/files -type d -exec chmod g+ws {} +
 	sudo find web/sites/default/files -type f -exec chmod g+w {} +
 
+	# The database image might be out of date so deploy any new changes from code
+	vendor/bin/drush cr
+	vendor/bin/drush $DRUSH_TASK
 
 	# Setup drush and other vendor binaries
 	echo "export PATH=\"`pwd`/vendor/bin:\$PATH\"" | tee -a ~/.bashrc ~/.zshrc ~/.zshrc.local
