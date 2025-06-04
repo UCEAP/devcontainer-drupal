@@ -23,17 +23,20 @@ RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
     && apt-get clean -y && rm -rf /var/lib/apt/lists/*
 
 # Configure PHP, make memory_limit and upload_max_filesize match Pantheon
-RUN cp /usr/local/etc/php/php.ini-development /usr/local/etc/php/php.ini
-RUN sed -i 's/memory_limit\s*=.*/memory_limit=2048M/g' /usr/local/etc/php/php.ini
-RUN sed -i 's/post_max_size\s*=.*/post_max_size=100M/g' /usr/local/etc/php/php.ini
-RUN sed -i 's/upload_max_filesize\s*=.*/upload_max_filesize=100M/g' /usr/local/etc/php/php.ini
-RUN sed -i 's/variables_order\s*=.*/variables_order="EGPCS"/g' /usr/local/etc/php/php.ini
+RUN cp /usr/local/etc/php/php.ini-development /usr/local/etc/php/php.ini \
+    && sed -i 's/memory_limit\s*=.*/memory_limit=2048M/g' /usr/local/etc/php/php.ini \
+    && sed -i 's/post_max_size\s*=.*/post_max_size=100M/g' /usr/local/etc/php/php.ini \
+    && sed -i 's/upload_max_filesize\s*=.*/upload_max_filesize=100M/g' /usr/local/etc/php/php.ini \
+    && sed -i 's/variables_order\s*=.*/variables_order="EGPCS"/g' /usr/local/etc/php/php.ini
 
 # Stop xdebug from spamming the console
 RUN echo 'xdebug.log_level = 0' >> /usr/local/etc/php/conf.d/xdebug.ini
 
 # Only use higher port for Apache, so that port forwarding is more consistent.
 RUN sed -i 's/Listen\s*80$/# Listen 80/' /etc/apache2/ports.conf
+
+# Enable Apache modules
+RUN a2enmod expires headers rewrite
 
 # Install terminus
 RUN curl -L https://github.com/pantheon-systems/terminus/releases/latest/download/terminus.phar --output /usr/local/bin/terminus \
