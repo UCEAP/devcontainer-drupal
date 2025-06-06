@@ -19,7 +19,7 @@ function refresh_content() {
 	sudo find web/sites/default/files -type d -exec chmod g+ws {} +
 	sudo find web/sites/default/files -type f -exec chmod g+w {} +
 
-	build/db-rebuild.sh $DATABASE_BACKUP
+	db-rebuild.sh $DATABASE_BACKUP
 
 	rm $FILES_BACKUP
 	rm $DATABASE_BACKUP
