@@ -18,10 +18,9 @@ function devcontainer_post_create() {
 	sudo a2enconf global-servername
 
 	# Setup drush
-	mkdir -p drush
 	export HTTP_ADDRESS
 	export HTTP_PROTOCOL
-	templater.sh /usr/local/share/drush/example.drush.yml > drush/drush.yml
+	templater.sh /usr/local/share/drush/example.drush.yml > web/sites/default/drush.yml
 
 	# set httpd port to be publicly accessible
 	if [[ -n "$CODESPACE_NAME" ]]; then
