@@ -88,7 +88,7 @@ if [ -z "$FILE" ]; then
   # generate temp file
   FILE=$(mktemp) || exit 1
   # grab latest production db backup.
-  curl `terminus backup:get --element=db myeap2.$TERMINUSENV` --output $FILE
+  curl `terminus backup:get --element=db $TERMINUS_SITE.$TERMINUSENV` --output $FILE
   function cleanup {
     rm "$FILE"
   }
