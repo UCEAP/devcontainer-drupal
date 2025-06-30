@@ -66,7 +66,7 @@ function devcontainer_on_create() {
 	uceap completion zsh | sudo sh -c "cat > /usr/local/share/zsh/site-functions/_uceap"
 	gh completion --shell zsh | sudo sh -c "cat > /usr/local/share/zsh/site-functions/_gh"
 	# Force loading of the completion script because I can't get it to autoload
-	echo "autoload -Uz _uceap && compdef _uceap uceap" >> ~/.zshrc
+	echo "autoload -Uz _uceap && compdef _uceap uceap" >> ~/.zshrc ~/.zshrc.local
 
 	# Run local devcontainer lifecycle scripts
 	if [ -x .devcontainer/onCreate.sh ]; then
