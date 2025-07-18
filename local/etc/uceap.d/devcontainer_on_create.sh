@@ -60,6 +60,9 @@ function devcontainer_on_create() {
 	mkdir -p $WORKSPACE_FOLDER/.vscode
 	cp /usr/local/share/vscode/* $WORKSPACE_FOLDER/.vscode/
 
+	# Install Claude Code
+	sudo npm install -g @anthropic-ai/claude-code
+
 	# Setup shell completion
 	uceap completion bash | sudo sh -c "cat > /etc/bash_completion.d/uceap"
 	gh completion --shell bash | sudo sh -c "cat > /etc/bash_completion.d/gh"
