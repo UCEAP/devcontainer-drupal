@@ -1,5 +1,6 @@
 {
   "recommendations": [
+    "anthropic.claude-code",
     "bmewburn.vscode-intelephense-client",
     "CucumberOpen.cucumber-official",
     "dbaeumer.vscode-eslint",
