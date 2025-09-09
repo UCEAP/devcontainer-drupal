@@ -25,6 +25,7 @@ RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
 # Configure PHP, make memory_limit and upload_max_filesize match Pantheon
 RUN cp /usr/local/etc/php/php.ini-development /usr/local/etc/php/php.ini \
     && sed -i 's/memory_limit\s*=.*/memory_limit=2048M/g' /usr/local/etc/php/php.ini \
+    && sed -i 's/;max_input_vars\s*=.*/max_input_vars=10000/g' /usr/local/etc/php/php.ini \
     && sed -i 's/post_max_size\s*=.*/post_max_size=100M/g' /usr/local/etc/php/php.ini \
     && sed -i 's/upload_max_filesize\s*=.*/upload_max_filesize=100M/g' /usr/local/etc/php/php.ini \
     && sed -i 's/variables_order\s*=.*/variables_order="EGPCS"/g' /usr/local/etc/php/php.ini
