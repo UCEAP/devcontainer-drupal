@@ -62,7 +62,6 @@ function devcontainer_on_create() {
 
 	# Install Claude Code
 	sudo npm install -g @anthropic-ai/claude-code
-	claude config set -g autoUpdates false
 
 	# Setup shell completion
 	uceap completion bash | sudo sh -c "cat > /etc/bash_completion.d/uceap"
