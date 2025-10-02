@@ -61,7 +61,14 @@ function devcontainer_on_create() {
   cp /usr/local/share/vscode/* $WORKSPACE_FOLDER/.vscode/
 
   # Install Claude Code
-  sudo npm install -g @anthropic-ai/claude-code
+  curl -fsSL https://claude.ai/install.sh | bash
+  sudo mkdir /etc/claude-code
+  sudo tee /etc/claude-code/managed-settings.json <<-EOF
+	{
+	  "forceLoginMethod": "console", 
+	  "forceLoginOrgUUID": "15adc0f4-9ba1-4a46-9f53-3aabde62ced6"
+	}
+	EOF
 
   # Setup shell completion
   uceap completion bash | sudo sh -c "cat > /etc/bash_completion.d/uceap"
