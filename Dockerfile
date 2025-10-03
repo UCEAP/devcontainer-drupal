@@ -22,6 +22,10 @@ RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
     && apt-get install -y dnsutils glow pv \
     && apt-get clean -y && rm -rf /var/lib/apt/lists/*
 
+# Install a newer Neovim than what Debian provides.
+RUN curl -LO https://github.com/neovim/neovim/releases/latest/download/nvim-linux-x86_64.tar.gz \
+  && tar -C /opt -xzf nvim-linux-x86_64.tar.gz
+
 # Configure PHP, make memory_limit and upload_max_filesize match Pantheon
 RUN cp /usr/local/etc/php/php.ini-development /usr/local/etc/php/php.ini \
     && sed -i 's/memory_limit\s*=.*/memory_limit=2048M/g' /usr/local/etc/php/php.ini \
