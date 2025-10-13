@@ -19,6 +19,7 @@ function devcontainer_on_create() {
 	host="$MYSQL_HOST"
 	user="$MYSQL_USER"
 	password="$MYSQL_PASSWORD"
+	skip-ssl
 	EOF
 
   # translate mysql env vars to our template vars
