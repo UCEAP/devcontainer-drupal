@@ -9,7 +9,7 @@ RUN mkdir -p /etc/apt/keyrings \
     && curl -fsSL https://repo.charm.sh/apt/gpg.key | gpg --dearmor -o /etc/apt/keyrings/charm.gpg \
     && echo "deb [signed-by=/etc/apt/keyrings/charm.gpg] https://repo.charm.sh/apt/ * *" | tee /etc/apt/sources.list.d/charm.list
 
-# Install MariaDB and Redis and PHP (incl Apache) and Cypress dependencies
+# Install MariaDB and Redis and PHP (incl Apache) and Cypress dependencies and Terraform and AWS CLI
 RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
     && apt-get install -y libpng-dev libzip-dev libicu-dev libjpeg62-turbo-dev \
     && docker-php-ext-install mysqli pdo pdo_mysql intl \
@@ -20,6 +20,17 @@ RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
     && apt-get install -y mariadb-client redis-tools mkdocs-material mkdocs-material-extensions \
     && apt-get install -y npm libgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev libnss3 libxss1 libasound2 libxtst6 xauth xvfb \
     && apt-get install -y dnsutils fd-find fzf glow lazygit luarocks pv ripgrep vivid \
+		&& apt-get install -y gnupg \
+		&& wget -O- https://apt.releases.hashicorp.com/gpg | \
+			gpg --dearmor | \
+			sudo tee /usr/share/keyrings/hashicorp-archive-keyring.gpg > /dev/null \
+		&& gpg --no-default-keyring \
+			--keyring /usr/share/keyrings/hashicorp-archive-keyring.gpg \
+			--fingerprint \
+		&& echo "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(lsb_release -cs) main" | \
+			sudo tee /etc/apt/sources.list.d/hashicorp.list > /dev/null \
+		&& apt update \
+		&& apt-get install -y awscli terraform \
     && apt-get clean -y && rm -rf /var/lib/apt/lists/*
 
 # Install ast-grep
