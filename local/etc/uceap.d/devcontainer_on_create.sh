@@ -52,12 +52,14 @@ function devcontainer_on_create() {
   sudo find web/sites/default/files -type f -exec chmod g+w {} +
 
 # debugging logs
+set +o pipefail
 id
 ls -la web/sites/default/files/private/logs
 drush eval "echo \Drupal::service('file_system')->realpath('private://logs/debug-2025-11-25.log');"
 FILE=$(drush eval "echo \Drupal::service('file_system')->realpath('private://logs/debug-2025-11-25.log');")
 echo $FILE
 ls -la $FILE
+set -eo pipefail
 
   # The database image might be out of date so deploy any new changes from code
   vendor/bin/drush deploy
