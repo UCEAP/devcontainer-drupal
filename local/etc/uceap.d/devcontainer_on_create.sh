@@ -63,13 +63,7 @@ function devcontainer_on_create() {
 
   # Install Claude Code
   curl -fsSL https://claude.ai/install.sh | bash
-  sudo mkdir /etc/claude-code
-  sudo tee /etc/claude-code/managed-settings.json <<-EOF
-	{
-	  "forceLoginMethod": "console", 
-	  "forceLoginOrgUUID": "15adc0f4-9ba1-4a46-9f53-3aabde62ced6"
-	}
-	EOF
+  echo -e "export CLAUDE_CODE_USE_FOUNDRY=1\nexport ANTHROPIC_FOUNDRY_RESOURCE=uceap-claude-test-resource" | tee -a ~/.bashrc ~/.zshrc ~/.zshrc.local
 
   # Put neovim in the PATH for those who celebrate
   ln -s /opt/nvim-linux-x86_64/bin/nvim ~/.local/bin
