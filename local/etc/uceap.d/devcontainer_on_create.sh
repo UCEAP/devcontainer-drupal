@@ -4,6 +4,10 @@ function devcontainer_on_create() {
   echo "umask 002" >>~/.zshrc
   echo "umask 002" >>~/.bashrc
 
+	# the first time we run this script the default umask is still in effect,
+	# which messes up permissions on the log file that gets created when we run drush deploy
+	umask 002
+
   sudo sh -c "cat >> /etc/apache2/sites-available/000-default.conf" <<-EOF
 	<Directory /var/www/html>
 		AllowOverride All
