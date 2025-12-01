@@ -74,6 +74,8 @@ function devcontainer_on_create() {
 	  "forceLoginOrgUUID": "15adc0f4-9ba1-4a46-9f53-3aabde62ced6"
 	}
 	EOF
+  claude plugin marketplace add UCEAP/claude
+  claude plugin install uceap
 
   # Put neovim in the PATH for those who celebrate
   ln -s /opt/nvim-linux-x86_64/bin/nvim ~/.local/bin
