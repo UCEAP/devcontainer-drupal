@@ -1,7 +1,7 @@
 FROM mcr.microsoft.com/devcontainers/php:8.3
 
 # Change default umask and add user to web group so we can share write permission on web files
-RUN sed -i 's/^UMASK\s*022/UMASK 002/' /etc/login.defs
+RUN sed -i 's/^UMASK[[:space:]]*022/UMASK\t\t002/' /etc/login.defs
 RUN usermod -aG www-data vscode
 
 # Add glow for formatting command usage output (and because it's just nice)
@@ -56,6 +56,9 @@ RUN sed -i 's/Listen\s*80$/# Listen 80/' /etc/apache2/ports.conf
 
 # Enable Apache modules
 RUN a2enmod expires headers rewrite
+
+# Set umask for Apache to ensure group-writable files
+RUN echo "umask 002" >> /etc/apache2/envvars
 
 # Install terminus
 RUN curl -L https://github.com/pantheon-systems/terminus/releases/latest/download/terminus.phar --output /usr/local/bin/terminus \

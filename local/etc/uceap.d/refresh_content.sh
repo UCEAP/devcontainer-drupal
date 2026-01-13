@@ -18,6 +18,8 @@ function refresh_content() {
 	# no-same-permissions doesn't seem to work so we fix it here
 	sudo find web/sites/default/files -type d -exec chmod g+ws {} +
 	sudo find web/sites/default/files -type f -exec chmod g+w {} +
+	# Temporary workaround: ensure group write permissions for logging
+	chmod -R g+w web/sites/default/files
 
 	db-rebuild.sh $DATABASE_BACKUP
 
