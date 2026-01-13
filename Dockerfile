@@ -1,7 +1,9 @@
 FROM mcr.microsoft.com/devcontainers/php:8.3
 
 # Change default umask and add user to web group so we can share write permission on web files
-RUN sed -i 's/^UMASK[[:space:]]*022/UMASK\t\t002/' /etc/login.defs
+# Configure pam_umask to set umask to 002 (works regardless of /etc/login.defs content)
+RUN sed -i 's/session optional\s*pam_umask.so$/session optional\t\t\tpam_umask.so umask=002/' /etc/pam.d/common-session \
+    && sed -i 's/session optional\s*pam_umask.so$/session optional\t\t\tpam_umask.so umask=002/' /etc/pam.d/common-session-noninteractive
 RUN usermod -aG www-data vscode
 
 # Add glow for formatting command usage output (and because it's just nice)
