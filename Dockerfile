@@ -1,7 +1,9 @@
 FROM mcr.microsoft.com/devcontainers/php:8.3
 
 # Change default umask and add user to web group so we can share write permission on web files
-RUN sed -i 's/^UMASK\s*022/UMASK 002/' /etc/login.defs
+# Configure pam_umask to set umask to 002 (works regardless of /etc/login.defs content)
+RUN sed -i 's/pam_umask\.so/pam_umask.so umask=002/' /etc/pam.d/common-session \
+    && sed -i 's/pam_umask\.so/pam_umask.so umask=002/' /etc/pam.d/common-session-noninteractive
 RUN usermod -aG www-data vscode
 
 # Add glow for formatting command usage output (and because it's just nice)
@@ -19,7 +21,7 @@ RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
     && docker-php-ext-enable redis zip \
     && apt-get install -y mariadb-client redis-tools mkdocs-material mkdocs-material-extensions \
     && apt-get install -y npm libgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev libnss3 libxss1 libasound2 libxtst6 xauth xvfb \
-    && apt-get install -y dnsutils fd-find fzf glow lazygit luarocks pv ripgrep vivid \
+    && apt-get install -y dnsutils fd-find fzf glow lazygit luarocks pv ripgrep tmux vivid \
 		&& apt-get install -y gnupg \
 		&& wget -O- https://apt.releases.hashicorp.com/gpg | \
 			gpg --dearmor | \
@@ -56,6 +58,9 @@ RUN sed -i 's/Listen\s*80$/# Listen 80/' /etc/apache2/ports.conf
 
 # Enable Apache modules
 RUN a2enmod expires headers rewrite
+
+# Set umask for Apache to ensure group-writable files
+RUN echo "umask 002" >> /etc/apache2/envvars
 
 # Install terminus
 RUN curl -L https://github.com/pantheon-systems/terminus/releases/latest/download/terminus.phar --output /usr/local/bin/terminus \
