@@ -19,7 +19,7 @@ RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
     && docker-php-ext-enable redis zip \
     && apt-get install -y mariadb-client redis-tools mkdocs-material mkdocs-material-extensions \
     && apt-get install -y npm libgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev libnss3 libxss1 libasound2 libxtst6 xauth xvfb \
-    && apt-get install -y dnsutils fd-find fzf glow lazygit luarocks pv ripgrep vivid \
+    && apt-get install -y dnsutils fd-find fzf glow lazygit luarocks pv ripgrep tmux vivid \
 		&& apt-get install -y gnupg \
 		&& wget -O- https://apt.releases.hashicorp.com/gpg | \
 			gpg --dearmor | \
