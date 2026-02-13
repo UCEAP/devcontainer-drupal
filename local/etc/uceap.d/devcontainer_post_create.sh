@@ -1,9 +1,4 @@
 function devcontainer_post_create() {
-	# Install GitHub CLI Copilot Extension
-	if [[ -n "$GH_TOKEN" ]] || [[ -n "$GITHUB_TOKEN" ]] ; then
-		gh extension install github/gh-copilot
-	fi
-
 	# set global ServerName so that apachectl isn't chatty
 	if [[ -n "$CODESPACE_NAME" ]]; then
 		SERVER_NAME="$CODESPACE_NAME-8080.app.github.dev"
