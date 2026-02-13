@@ -35,8 +35,9 @@ RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
 		&& apt-get install -y awscli azure-cli terraform \
     && apt-get clean -y && rm -rf /var/lib/apt/lists/*
 
-# Install ast-grep
-RUN npm i @ast-grep/cli -g
+# Install ast-grep and yarn
+RUN npm i @ast-grep/cli -g \
+    && npm i yarn -g
 
 # Install a newer Neovim than what Debian provides.
 RUN curl -LO https://github.com/neovim/neovim/releases/latest/download/nvim-linux-x86_64.tar.gz \
