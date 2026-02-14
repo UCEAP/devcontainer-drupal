@@ -1,8 +1,7 @@
 function devcontainer_on_create() {
   # Change default umask and add user to web group so we can share write permission on web files
   sed -i 's/^#umask\s*022/umask 002/' ~/.profile
-  echo "umask 002" >>~/.zshrc
-  echo "umask 002" >>~/.bashrc
+  echo "umask 002" | tee -a ~/.bashrc ~/.zshrc ~/.zshrc.local
 
 	# the first time we run this script the default umask is still in effect,
 	# which messes up permissions on the log file that gets created when we run drush deploy
@@ -57,6 +56,9 @@ function devcontainer_on_create() {
 
   # The database image might be out of date so deploy any new changes from code
   vendor/bin/drush deploy
+
+	# If the drush command generated a log file as the current user, make sure httpd can write to it
+	chmod -R g+w web/sites/default/files/private/logs
 
   # Setup drush and other vendor binaries
   echo "export PATH=\"$(pwd)/vendor/bin:\$PATH\"" | tee -a ~/.bashrc ~/.zshrc ~/.zshrc.local
