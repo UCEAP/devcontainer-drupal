@@ -1,5 +1,8 @@
 FROM mcr.microsoft.com/devcontainers/php:8.2
 
+# Remove stale Yarn apt source from base image (expired GPG key breaks apt-get update)
+RUN rm -f /etc/apt/sources.list.d/yarn.list
+
 # Change default umask and add user to web group so we can share write permission on web files
 RUN sed -i 's/^UMASK\s*022/UMASK 002/' /etc/login.defs
 RUN usermod -aG www-data vscode
