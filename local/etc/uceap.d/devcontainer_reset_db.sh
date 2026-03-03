@@ -46,6 +46,11 @@ function devcontainer_reset_db() {
 	echo "Waiting for database to be ready..."
 	sleep 5
 
+	# Clear Drupal cache since the database was reset
+	echo "Clearing Drupal cache..."
+	_cwd_workspace
+	drush cache-rebuild
+
 	echo "Database reset complete!"
 }
 
