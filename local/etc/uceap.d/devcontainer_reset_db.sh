@@ -1,25 +1,36 @@
 function devcontainer_reset_db() {
-	# Determine the compose project name from the workspace folder
-	# Use WORKSPACE_FOLDER env var if set by devcontainer, otherwise derive from pwd
-	if [ -n "$WORKSPACE_FOLDER" ]; then
-		WORKSPACE_NAME=$(basename "$WORKSPACE_FOLDER")
-	else
-		WORKSPACE_NAME=$(basename "$(pwd)")
+	# Detect the compose project by inspecting the current container
+	CURRENT_CONTAINER=$(hostname)
+	echo "Running from container: $CURRENT_CONTAINER"
+
+	# Get the compose project name from the current container's labels
+	COMPOSE_PROJECT=$(docker inspect "$CURRENT_CONTAINER" --format '{{index .Config.Labels "com.docker.compose.project"}}' 2>/dev/null)
+
+	if [ -z "$COMPOSE_PROJECT" ]; then
+		echo "Warning: Could not detect compose project from container labels"
+		echo "Falling back to workspace-based detection..."
+		# Fallback to the old method
+		if [ -n "$WORKSPACE_FOLDER" ]; then
+			WORKSPACE_NAME=$(basename "$WORKSPACE_FOLDER")
+		else
+			WORKSPACE_NAME=$(basename "$(pwd)")
+		fi
+		COMPOSE_PROJECT="${COMPOSE_PROJECT_NAME:-${WORKSPACE_NAME}_devcontainer}"
 	fi
-	COMPOSE_PROJECT="${COMPOSE_PROJECT_NAME:-${WORKSPACE_NAME}_devcontainer}"
 
 	echo "Using compose project: $COMPOSE_PROJECT"
 
-	# Get the container name
-	CONTAINER_NAME="${COMPOSE_PROJECT}-mariadb-1"
+	# Find the mariadb container in the same compose project
+	CONTAINER_NAME=$(docker ps -a --filter "label=com.docker.compose.project=$COMPOSE_PROJECT" --filter "label=com.docker.compose.service=mariadb" --format "{{.Names}}" | head -n 1)
 
-	# Verify the container exists
-	if ! docker inspect "$CONTAINER_NAME" &>/dev/null; then
-		echo "Error: Container $CONTAINER_NAME not found"
+	if [ -z "$CONTAINER_NAME" ]; then
+		echo "Error: Could not find mariadb container for project '$COMPOSE_PROJECT'"
 		echo "Available mariadb containers:"
-		docker ps -a --filter "name=mariadb" --format "{{.Names}}"
+		docker ps -a --filter "name=mariadb" --format "table {{.Names}}\t{{.Label \"com.docker.compose.project\"}}"
 		return 1
 	fi
+
+	echo "Found container: $CONTAINER_NAME"
 
 	# Get the volume name from the mariadb container before stopping it
 	VOLUME_NAME=$(docker inspect "$CONTAINER_NAME" --format '{{range .Mounts}}{{if eq .Destination "/var/lib/mysql"}}{{.Name}}{{end}}{{end}}')
@@ -29,7 +40,6 @@ function devcontainer_reset_db() {
 		return 1
 	fi
 
-	echo "Found container: $CONTAINER_NAME"
 	echo "Found volume: $VOLUME_NAME"
 
 	# Stop and remove the container
