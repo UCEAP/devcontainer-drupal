@@ -3,7 +3,7 @@ function cleanup_multidevs() {
 	multidevs=($(terminus env:list $TERMINUS_SITE --field=id | grep -E '^pr-[0-9]+(-e2e)?$'))
 	for multidev in "${multidevs[@]}"; do
 		pr_id=$(echo "$multidev" | grep -oE '[0-9]+')
-		state=$(gh pr view "$pr_id" --repo "$repo" --json state -q ".state")
+		state=$(gh pr view "$pr_id" --repo "$GH_REPO" --json state -q ".state")
 		if [[ "$state" != "OPEN" ]]; then
 			echo "PR #$pr_id ($multidev) is $state"
 			terminus env:delete "$TERMINUS_SITE.$multidev" --yes
