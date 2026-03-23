@@ -17,6 +17,9 @@ function devcontainer_on_create() {
   # This is how the example codespace changes the docroot. If it's good enough for them, it's good enough for me.
   sudo chmod a+x "$(pwd)" && sudo rm -rf /var/www/html && sudo ln -s "$(pwd)/web" /var/www/html
 
+  # Some hosts give us a /workspaces inaccessible to httpd
+  chmod o+x /workspaces
+
   # Setup database if MYSQL_HOST = 127.0.0.1
   cat >~/.my.cnf <<-EOF
 	[client]
