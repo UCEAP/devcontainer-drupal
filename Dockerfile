@@ -1,4 +1,6 @@
 FROM mcr.microsoft.com/devcontainers/php:8.3
+# Copy latest 2.9.x build of composer over the version provided by the microsoft image above
+COPY --from=composer/composer:2.9-bin /composer /usr/bin/composer
 
 # Change default umask and add user to web group so we can share write permission on web files
 # Configure pam_umask to set umask to 002 (works regardless of /etc/login.defs content)
