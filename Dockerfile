@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/devcontainers/php:8.3
+FROM mcr.microsoft.com/devcontainers/php:8.4
 
 # Change default umask and add user to web group so we can share write permission on web files
 # Configure pam_umask to set umask to 002 (works regardless of /etc/login.defs content)
