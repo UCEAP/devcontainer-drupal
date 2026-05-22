@@ -14,6 +14,9 @@ function devcontainer_update_content() {
 	if [ -x .devcontainer/updateContent.sh ]; then
 		.devcontainer/updateContent.sh
 	fi
+
+	# Leave the shellServer with a valid cwd for any subsequent step (see issue #45)
+	cd "$WORKSPACE_FOLDER"
 }
 
 _devcontainer_update_content_desc='runs when devcontainer content needs updating'
