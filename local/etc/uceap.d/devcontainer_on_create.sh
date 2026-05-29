@@ -1,4 +1,6 @@
 function devcontainer_on_create() {
+  _cwd_workspace
+
   # Change default umask and add user to web group so we can share write permission on web files
   sed -i 's/^#umask\s*022/umask 002/' ~/.profile
   echo "umask 002" >>~/.zshrc
@@ -91,6 +93,9 @@ function devcontainer_on_create() {
   if [ -x .devcontainer/onCreate.sh ]; then
     .devcontainer/onCreate.sh
   fi
+
+  # Leave the shellServer with a valid cwd for any subsequent step (see issue #45)
+  cd "$WORKSPACE_FOLDER"
 }
 
 _devcontainer_on_create_desc='runs when the devcontainer is created'

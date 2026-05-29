@@ -1,4 +1,6 @@
 function devcontainer_post_create() {
+	_cwd_workspace
+
 	# set global ServerName so that apachectl isn't chatty
 	if [[ -n "$CODESPACE_NAME" ]]; then
 		SERVER_NAME="$CODESPACE_NAME-8080.app.github.dev"
@@ -27,6 +29,9 @@ function devcontainer_post_create() {
 	if [ -x .devcontainer/postCreate.sh ]; then
 		.devcontainer/postCreate.sh
 	fi
+
+	# Leave the shellServer with a valid cwd for any subsequent step (see issue #45)
+	cd "$WORKSPACE_FOLDER"
 }
 
 _devcontainer_post_create_desc='runs after the devcontainer is created'
