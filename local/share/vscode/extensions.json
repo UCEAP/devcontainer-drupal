@@ -4,7 +4,6 @@
     "bmewburn.vscode-intelephense-client",
     "CucumberOpen.cucumber-official",
     "dbaeumer.vscode-eslint",
-    "eamodio.gitlens",
     "GitHub.codespaces",
     "GitHub.copilot-chat",
     "GitHub.remotehub",
@@ -13,7 +12,6 @@
     "Gruntfuggly.todo-tree",
     "mblode.twig-language-2",
     "ms-vscode.remote-repositories",
-    "ms-vsliveshare.vsliveshare",
     "shevaua.phpcs"
   ]
 }
