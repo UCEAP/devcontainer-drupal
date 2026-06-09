@@ -29,9 +29,6 @@ function devcontainer_post_create() {
 	if [ -x .devcontainer/postCreate.sh ]; then
 		.devcontainer/postCreate.sh
 	fi
-
-	# Leave the shellServer with a valid cwd for any subsequent step (see issue #45)
-	cd "$WORKSPACE_FOLDER"
 }
 
 _devcontainer_post_create_desc='runs after the devcontainer is created'

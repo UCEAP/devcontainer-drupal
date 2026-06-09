@@ -1,5 +1,13 @@
 FROM mcr.microsoft.com/devcontainers/php:8.3
 
+# The php base image sets WORKDIR to /var/www/html, which devcontainer_on_create.sh
+# later deletes and replaces with a symlink to the mounted docroot. The devcontainer
+# CLI starts its persistent setup shell ("shellServer") in WORKDIR with no -w flag, so
+# that deletion orphans the shell's cwd and the subsequent dotfiles `git clone` fails
+# with "Unable to read current working directory" (issue #45). Anchor WORKDIR to a
+# stable directory that the lifecycle scripts never delete.
+WORKDIR /home/vscode
+
 # Change default umask and add user to web group so we can share write permission on web files
 # Configure pam_umask to set umask to 002 (works regardless of /etc/login.defs content)
 RUN sed -i 's/pam_umask\.so/pam_umask.so umask=002/' /etc/pam.d/common-session \
