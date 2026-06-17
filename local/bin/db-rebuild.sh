@@ -158,3 +158,6 @@ echo "Import completed with status code $?"
 # update db with latest code/config changes
 echo "Running drush:$DRUSHTASK to update DB with latest configs and baseline migrations."
 eval "cd $WEBROOT && drush $DRUSHTASK"
+
+# In case the drush command generated a new log file as the current user, make sure httpd can write to it
+chmod -R g+w web/sites/default/files/private/logs
