@@ -8,10 +8,22 @@ FROM mcr.microsoft.com/devcontainers/php:8.3
 # stable directory that the lifecycle scripts never delete.
 WORKDIR /home/vscode
 
-# Change default umask and add user to web group so we can share write permission on web files
-# Configure pam_umask to set umask to 002 (works regardless of /etc/login.defs content)
+# Set umask to 002 system-wide so files stay group-writable for the www-data web
+# server. We can't rely on per-user shell rc files: developers often symlink their
+# own ~/.zshrc/~/.bashrc from a personal dotfiles repo, overwriting our edits. And
+# pam_umask only fires for login PAM sessions, which the VS Code-spawned terminals
+# and `exec`s in this devcontainer don't open. So set it in the system shell files:
+#   - /etc/zsh/zshenv        sourced by EVERY zsh invocation (login/non-login, interactive/not)
+#   - /etc/bash.bashrc       sourced by interactive non-login bash (VS Code terminals)
+#   - /etc/profile.d/umask.sh sourced by login shells (sh and bash)
+# Note: non-interactive bash (e.g. `bash -c`, scripts) has no equivalent hook, but
+# tooling such as drush runs under zsh, which /etc/zsh/zshenv covers completely.
+# pam_umask is left in place as a backstop for real PAM sessions (ssh, su, cron).
 RUN sed -i 's/pam_umask\.so/pam_umask.so umask=002/' /etc/pam.d/common-session \
-    && sed -i 's/pam_umask\.so/pam_umask.so umask=002/' /etc/pam.d/common-session-noninteractive
+    && sed -i 's/pam_umask\.so/pam_umask.so umask=002/' /etc/pam.d/common-session-noninteractive \
+    && echo "umask 002" >> /etc/zsh/zshenv \
+    && echo "umask 002" >> /etc/bash.bashrc \
+    && echo "umask 002" > /etc/profile.d/umask.sh
 RUN usermod -aG www-data vscode
 
 # Add glow for formatting command usage output (and because it's just nice)
