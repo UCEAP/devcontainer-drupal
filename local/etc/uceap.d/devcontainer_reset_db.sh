@@ -63,8 +63,7 @@ function devcontainer_reset_db() {
 
 	echo "Re-import local Drupal changes..."
 	_cwd_workspace
-	drush updb
-	drush cim -y
+	drush deploy
 
 	echo "Database reset complete!"
 }
