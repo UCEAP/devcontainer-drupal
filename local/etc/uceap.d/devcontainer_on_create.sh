@@ -1,13 +1,11 @@
 function devcontainer_on_create() {
   _cwd_workspace
 
-  # Change default umask and add user to web group so we can share write permission on web files
-  sed -i 's/^#umask\s*022/umask 002/' ~/.profile
-  echo "umask 002" >>~/.zshrc
-  echo "umask 002" >>~/.bashrc
-
-	# the first time we run this script the default umask is still in effect,
-	# which messes up permissions on the log file that gets created when we run drush deploy
+	# umask is configured system-wide in the Dockerfile (/etc/zsh/zshenv,
+	# /etc/bash.bashrc and /etc/profile.d/umask.sh) so files we create stay
+	# group-writable for the www-data web server. That isn't in effect yet in this
+	# shell on the first run, which would leave the log file created by the drush
+	# deploy below non-group-writable, so set it here too.
 	umask 002
 
   sudo sh -c "cat >> /etc/apache2/sites-available/000-default.conf" <<-EOF
