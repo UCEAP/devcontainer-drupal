@@ -2,6 +2,23 @@ function devcontainer_reset_db() {
 	# Detect the compose project by inspecting the current container
 	CURRENT_CONTAINER=$(hostname)
 	echo "Running from container: $CURRENT_CONTAINER"
+	local skip_deploy=false
+
+	# Loop through all arguments passed to the function
+    while [[ $# -gt 0 ]]; do
+        case "$1" in
+            -sd|--skip-deploy)
+                skip_deploy=true
+                return 0
+                ;;
+            *)
+                echo "Unknown option: $1" >&2
+                return 1
+                ;;
+        case_end
+        esac
+    done
+
 
 	# Get the compose project name from the current container's labels
 	COMPOSE_PROJECT=$(docker inspect "$CURRENT_CONTAINER" --format '{{index .Config.Labels "com.docker.compose.project"}}' 2>/dev/null)
@@ -61,10 +78,12 @@ function devcontainer_reset_db() {
 	_cwd_workspace
 	drush cache-rebuild
 
-	echo "Re-import local Drupal changes..."
-	_cwd_workspace
-	drush deploy
-
+	# Check if skip-deploy not passed as option and run deploy
+	if [ "$skip_deploy" = false ]; then
+		echo "Re-import local Drupal changes..."
+		_cwd_workspace
+		drush deploy
+	fi
 	echo "Database reset complete!"
 }
 
