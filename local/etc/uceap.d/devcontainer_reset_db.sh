@@ -1,23 +1,27 @@
 function devcontainer_reset_db() {
 	# Detect the compose project by inspecting the current container
+	local CURRENT_CONTAINER
+	local COMPOSE_PROJECT
+	local WORKSPACE_NAME
+	local CONTAINER_NAME
+	local VOLUME_NAME
 	CURRENT_CONTAINER=$(hostname)
 	echo "Running from container: $CURRENT_CONTAINER"
 	local skip_deploy=false
 
 	# Loop through all arguments passed to the function
-    while [[ $# -gt 0 ]]; do
-        case "$1" in
-            -sd|--skip-deploy)
-                skip_deploy=true
-                return 0
-                ;;
-            *)
-                echo "Unknown option: $1" >&2
-                return 1
-                ;;
-        case_end
-        esac
-    done
+	while [[ $# -gt 0 ]]; do
+		case "$1" in
+			-sd|--skip-deploy)
+				skip_deploy=true
+				shift
+				;;
+			*)
+				echo "Unknown option: $1" >&2
+				return 1
+				;;
+		esac
+	done
 
 
 	# Get the compose project name from the current container's labels
@@ -60,15 +64,15 @@ function devcontainer_reset_db() {
 	echo "Found volume: $VOLUME_NAME"
 
 	# Stop and remove the container
-	docker compose -p "$COMPOSE_PROJECT" -f .devcontainer/docker-compose.yml stop mariadb
-	docker compose -p "$COMPOSE_PROJECT" -f .devcontainer/docker-compose.yml rm -f mariadb
+	docker compose -p "$COMPOSE_PROJECT" -f .devcontainer/docker-compose.yml stop mariadb || return 1
+	docker compose -p "$COMPOSE_PROJECT" -f .devcontainer/docker-compose.yml rm -f mariadb || return 1
 
 	# Remove the volume
 	echo "Removing volume: $VOLUME_NAME"
-	docker volume rm "$VOLUME_NAME"
+	docker volume rm "$VOLUME_NAME" || return 1
 
 	# Start the container with a fresh volume
-	docker compose -p "$COMPOSE_PROJECT" -f .devcontainer/docker-compose.yml up -d mariadb
+	docker compose -p "$COMPOSE_PROJECT" -f .devcontainer/docker-compose.yml up -d mariadb || return 1
 
 	echo "Waiting for database to be ready..."
 	sleep 5
@@ -76,13 +80,13 @@ function devcontainer_reset_db() {
 	# Clear Drupal cache since the database was reset
 	echo "Clearing Drupal cache..."
 	_cwd_workspace
-	drush cache-rebuild
+	drush cache-rebuild || return 1
 
 	# Check if skip-deploy not passed as option and run deploy
 	if [ "$skip_deploy" = false ]; then
 		echo "Re-import local Drupal changes..."
 		_cwd_workspace
-		drush deploy
+		drush deploy || return 1
 	fi
 	echo "Database reset complete!"
 }
@@ -95,6 +99,7 @@ Resets the devcontainer database to its original state by recreating the mariadb
 
 ``` bash
 uceap devcontainer-reset-db
+uceap devcontainer-reset-db --skip-deploy
 ```
 
 ## Description
@@ -104,6 +109,8 @@ This command is faster than `uceap refresh-content` when you only need to reset 
 1. Stopping and removing the mariadb container
 2. Removing the anonymous volume that contains the modified database data
 3. Recreating the container from the image with baked-in seed data
+
+Use `--skip-deploy` to skip `drush deploy` after the reset.
 
 This is useful after running e2e tests that modify the database (e.g., submitting an application). The database container image has seed data pre-baked, so resetting to a clean state is much faster than downloading and importing a SQL dump from Pantheon.
 
