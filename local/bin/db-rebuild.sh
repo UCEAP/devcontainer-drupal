@@ -6,7 +6,9 @@ USER=${DB_USER:-${MYSQL_USER:-root}}
 PASSWORD=${DB_PASSWORD:-${MYSQL_PASSWORD:-}}
 DATABASE=${DB_NAME:-${MYSQL_DATABASE:-database}}
 PORT=${DB_PORT:-${MYSQL_TCP_PORT:-3306}}
-WEBROOT=${LANDO_WEBROOT:-$(dirname $(dirname $(realpath $0)))}
+WEBROOT=${WORKSPACE_FOLDER:-$(dirname $(dirname $(realpath $0)))}
+DRUSH_BIN=${WEBROOT}/vendor/bin/drush
+DRUSH=${DRUSH_BIN:-drush}
 DRUSHTASK=${DRUSH_TASK:-deploy}
 TERMINUSENV=${TERMINUS_ENV:-dev}
 
@@ -157,4 +159,4 @@ echo "Import completed with status code $?"
 
 # update db with latest code/config changes
 echo "Running drush:$DRUSHTASK to update DB with latest configs and baseline migrations."
-eval "cd $WEBROOT && drush $DRUSHTASK"
+eval "cd $WEBROOT && $DRUSH $DRUSHTASK"
