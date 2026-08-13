@@ -114,6 +114,12 @@ RUN curl -sS https://starship.rs/install.sh | sh -s -- --yes
 # # So instead we download the latest precompiled binary for our cpu architecture:
 RUN curl -sL $(curl -s https://api.github.com/repos/atuinsh/atuin/releases/latest | jq -r '.assets[] | select(.name == "atuin-'`uname -m`'-unknown-linux-gnu.tar.gz") | .browser_download_url') | tar zx --no-same-owner --wildcards --absolute-names --transform 's,[^/]*,/usr/local/bin,' '*/atuin'
 
+# Prepare the .claude directory to work as a mounted volume that can been altered
+# Works around a Docker named-volume issue:
+# When Docker creates a brand-new named volume and mounts it into an empty path,
+# it initializes that directory as root:root regardless of what user your container normally runs as.
+RUN mkdir -p /home/vscode/.claude && chown vscode:vscode /home/vscode/.claude
+
 # Our base image has an ancient version of gh cli in apt, so we download the latest version instead
 RUN curl -sL $(curl -s https://api.github.com/repos/cli/cli/releases/latest | jq -r '.assets[] | select(.name | endswith("_linux_'`uname -m | sed s/aarch64/arm64/ | sed s/x86_64/amd64/`'.tar.gz")) | .browser_download_url') | tar zx --no-same-owner --wildcards --absolute-names --transform 's,[^/]*,/usr/local,' '*/gh'
 
