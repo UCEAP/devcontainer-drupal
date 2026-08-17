@@ -14,6 +14,15 @@ on:
     tags: [ 'v*.*.*' ]
   pull_request:
     branches: [ "main" ]
+  # Rebuild on demand, e.g. to pick up a security update without waiting for the
+  # weekly schedule. Select the branch to build in the "Run workflow" dialog; the
+  # image is tagged after that branch, same as a push to it.
+  workflow_dispatch:
+    inputs:
+      no_cache:
+        description: 'Build without cache (pulls fresh base image and re-runs package installs)'
+        type: boolean
+        default: false
 
 env:
   # Use docker.io for Docker Hub if empty
@@ -84,6 +93,10 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
+          # A cached build would happily reuse the vulnerable layers a security
+          # rebuild is meant to replace, so let the operator opt out of the cache.
+          no-cache: ${{ inputs.no_cache == true }}
+          pull: ${{ inputs.no_cache == true }}
 
       # Sign the resulting Docker image digest.
       # This will only write to the public Rekor transparency log when the Docker
