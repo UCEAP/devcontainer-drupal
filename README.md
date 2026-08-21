@@ -15,16 +15,19 @@ To see a list of available commands, run `uceap` in the terminal. You can also r
 
 ## Tips and tricks
 
-I frequently invoke `uceap refresh-content` to reset my local environment after switching branches. It runs `composer install` and invokes `db-rebuild.sh` with a fresh copy of the latest snapshot of the dev environment database and files. With shell completions installed, it's as easy as `uce<TAB>r<TAB>`.
+I frequently invoke `uceap devcontainer-reset-db` to reset my local database after switching branches, or after e2e tests have left data behind. It recreates the mariadb container from the seed data baked into its image and then runs `drush deploy`, so there's nothing to download from Pantheon. With shell completions installed, it's `uce<TAB>devc<TAB>r<TAB>`.
 
-> 👉 When working on a PR that adds update hooks or makes config changes, it's generally a good idea to make sure it applies cleanly to a database matching the QA environment. To do this, switch to the `qa` branch, run refresh-content, switch back to your branch, and run the deploy command (e.g. `drush md` for the portal):
+> 👉 When working on a PR that adds update hooks or makes config changes, it's generally a good idea to make sure it applies cleanly to a database matching the QA environment. To do this, switch to the `qa` branch, reset the database, switch back to your branch, and run the deploy command (e.g. `drush md` for the portal):
 > ``` zsh
 > git checkout qa
-> uceap refresh-content
+> composer install
+> uceap devcontainer-reset-db
 > git checkout -
 > composer install
 > drush deploy
 > ```
+
+The seed data baked into the database image is a point-in-time snapshot of the DEV environment, and it doesn't include the files directory. When you need the _current_ contents of DEV, along with its files, use `uceap refresh-content` instead: it runs `composer install`, compiles the theme, and invokes `db-rebuild.sh` with the latest database and files backups from Pantheon.
 
 Troubleshooting an issue on the live site? `TERMINUS_ENV=live uceap refresh-content` will pull the latest backup of the database and files from LIVE. _You'll be knee-deep in PII in no time!_ **Be sure to reset your database and files with DEV data as soon as you're done.**
 
