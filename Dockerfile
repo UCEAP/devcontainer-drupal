@@ -53,6 +53,9 @@ RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
 			sudo tee /etc/apt/sources.list.d/hashicorp.list > /dev/null \
 		&& apt update \
 		&& apt-get install -y awscli azure-cli terraform \
+		# Terraform is installed; drop the HashiCorp repo so future apt-get updates
+    	# (devcontainer features, developers) don't break when HashiCorp rotates keys.
+    	&& rm -f /etc/apt/sources.list.d/hashicorp.list /usr/share/keyrings/hashicorp-archive-keyring.gpg \
     && apt-get clean -y && rm -rf /var/lib/apt/lists/*
 
 # Install ast-grep and yarn
