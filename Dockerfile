@@ -58,6 +58,19 @@ RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
     	&& rm -f /etc/apt/sources.list.d/hashicorp.list /usr/share/keyrings/hashicorp-archive-keyring.gpg \
     && apt-get clean -y && rm -rf /var/lib/apt/lists/*
 
+# `aws ssm start-session` shells out to a separate binary and fails with
+# "SessionManagerPlugin is not found" without it, so the CLI above is only half
+# the tool. AWS publishes no apt repository, no GPG key and no checksum for this
+# — an unsigned .deb from an S3 bucket is the documented install, and their own
+# verification step is running the binary to see if it prints success. The
+# --version call below is that check, at build time, so a bad download breaks
+# the image rather than someone's session.
+RUN curl -fsSL "https://s3.amazonaws.com/session-manager-downloads/plugin/latest/ubuntu_`uname -m | sed s/x86_64/64bit/ | sed s/aarch64/arm64/`/session-manager-plugin.deb" \
+			-o /tmp/session-manager-plugin.deb \
+	&& dpkg -i /tmp/session-manager-plugin.deb \
+	&& rm -f /tmp/session-manager-plugin.deb \
+	&& session-manager-plugin --version
+
 # Install ast-grep and yarn
 RUN npm i @ast-grep/cli -g \
     && npm i yarn -g
