@@ -5,7 +5,11 @@ function _pantheon_deploy() {
 		major_upgrade=true
 	fi
 	terminus drush -- state-set system.maintenance_mode TRUE
-	terminus env:clear-cache
+	# env:clear-cache runs a cache rebuild, which fails if a stalled deploy left
+	# the new code on the old schema, so it waits until after the updates.
+	if ! $major_upgrade; then
+		terminus env:clear-cache
+	fi
 	terminus env:deploy $deploy_args
 	if $major_upgrade; then
 		# A new major version of core can't rebuild its cache against the old
