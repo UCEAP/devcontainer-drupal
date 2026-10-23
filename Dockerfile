@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/devcontainers/php:8.3
+FROM mcr.microsoft.com/devcontainers/php:8.4
 
 # The php base image sets WORKDIR to /var/www/html, which devcontainer_on_create.sh
 # later deletes and replaces with a symlink to the mounted docroot. The devcontainer
