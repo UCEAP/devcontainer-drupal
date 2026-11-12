@@ -1,51 +1,17 @@
 function _pantheon_deploy() {
 	_assert_terminus_vars
-	local major_upgrade=false
-	if _drupal_major_upgrade_pending; then
-		major_upgrade=true
-	fi
 	terminus drush -- state-set system.maintenance_mode TRUE
-	# env:clear-cache runs a cache rebuild, which fails if a stalled deploy left
-	# the new code on the old schema, so it waits until after the updates.
-	if ! $major_upgrade; then
-		terminus env:clear-cache
-	fi
+	# No cache clear before env:deploy: if an earlier deploy stalled, the target
+	# already has new code on the old schema, and a cache rebuild there can fail
+	# before the database updates get a chance to run.
 	terminus env:deploy $deploy_args
-	if $major_upgrade; then
-		# A new major version of core can't rebuild its cache against the old
-		# schema, so the database updates must run before cache-rebuild.
-		terminus drush -- updatedb -y
-	fi
 	_pantheon_complete_deployment
 }
 
-# Succeeds when the code being deployed runs a newer Drupal major version than
-# the database that will end up in the target environment.
-function _drupal_major_upgrade_pending() {
-	local code_env db_env code_version db_version
-	case "$TERMINUS_ENV" in
-		test) code_env="dev" ;;
-		live) code_env="test" ;;
-		*) return 1 ;;
-	esac
-	# --sync-content replaces the target's database with LIVE's.
-	if [[ " $deploy_args " == *" --sync-content "* ]]; then
-		db_env="live"
-	else
-		db_env="$TERMINUS_ENV"
-	fi
-	code_version=$(terminus drush "$TERMINUS_SITE.$code_env" -- status --field=drupal-version) || return 1
-	db_version=$(terminus drush "$TERMINUS_SITE.$db_env" -- status --field=drupal-version) || return 1
-	echo "Drupal core: $code_version on $code_env, $db_version on $db_env"
-	if [ "${code_version%%.*}" -gt "${db_version%%.*}" ]; then
-		echo "Major version upgrade detected; database updates will run before cache-rebuild."
-		return 0
-	fi
-	return 1
-}
-
 function _pantheon_complete_deployment() {
-	terminus drush -- cache-rebuild
+	# drush deploy runs updatedb before config:import and cache:rebuild. Don't
+	# rebuild caches before it: new core code can't rebuild against a schema
+	# its update hooks haven't migrated yet (e.g. 11.1 -> 11.4 adds router.alias).
 	terminus drush -- deploy
 	sleep 60
 	terminus drush -- state-set system.maintenance_mode FALSE
