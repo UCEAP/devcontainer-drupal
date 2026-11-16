@@ -76,8 +76,9 @@ RUN npm i @ast-grep/cli -g \
     && npm i yarn -g
 
 # Install a newer Neovim than what Debian provides.
-RUN curl -LO https://github.com/neovim/neovim/releases/latest/download/nvim-linux-x86_64.tar.gz \
-  && tar -C /opt -xzf nvim-linux-x86_64.tar.gz
+RUN mkdir -p /opt/nvim \
+  && curl -fsSL "https://github.com/neovim/neovim/releases/latest/download/nvim-linux-$(uname -m | sed s/aarch64/arm64/).tar.gz" \
+  | tar -C /opt/nvim --strip-components=1 -xz
 
 # Configure PHP, make memory_limit and upload_max_filesize match Pantheon
 RUN cp /usr/local/etc/php/php.ini-development /usr/local/etc/php/php.ini \
@@ -100,7 +101,7 @@ RUN a2enmod expires headers rewrite
 RUN echo "umask 002" >> /etc/apache2/envvars
 
 # Install terminus
-RUN curl -L https://github.com/pantheon-systems/terminus/releases/latest/download/terminus.phar --output /usr/local/bin/terminus \
+RUN curl -fsSL https://github.com/pantheon-systems/terminus/releases/latest/download/terminus.phar --output /usr/local/bin/terminus \
   && chmod +x /usr/local/bin/terminus \
 	&& terminus self:plugin:install terminus-secrets-manager-plugin
 
@@ -128,7 +129,7 @@ RUN curl -sS https://starship.rs/install.sh | sh -s -- --yes
 # RUN PATH="$HOME/.cargo/bin:$PATH" cargo install atuin
 #
 # # So instead we download the latest precompiled binary for our cpu architecture:
-RUN curl -sL $(curl -s https://api.github.com/repos/atuinsh/atuin/releases/latest | jq -r '.assets[] | select(.name == "atuin-'`uname -m`'-unknown-linux-gnu.tar.gz") | .browser_download_url') | tar zx --no-same-owner --wildcards --absolute-names --transform 's,[^/]*,/usr/local/bin,' '*/atuin'
+RUN curl -fsSL "https://github.com/atuinsh/atuin/releases/latest/download/atuin-$(uname -m)-unknown-linux-gnu.tar.gz" | tar zx --no-same-owner --wildcards --absolute-names --transform 's,[^/]*,/usr/local/bin,' '*/atuin'
 
 # Prepare the .claude directory to work as a mounted volume that can been altered
 # Works around a Docker named-volume issue:
@@ -137,7 +138,10 @@ RUN curl -sL $(curl -s https://api.github.com/repos/atuinsh/atuin/releases/lates
 RUN mkdir -p /home/vscode/.claude && chown vscode:vscode /home/vscode/.claude
 
 # Our base image has an ancient version of gh cli in apt, so we download the latest version instead
-RUN curl -sL $(curl -s https://api.github.com/repos/cli/cli/releases/latest | jq -r '.assets[] | select(.name | endswith("_linux_'`uname -m | sed s/aarch64/arm64/ | sed s/x86_64/amd64/`'.tar.gz")) | .browser_download_url') | tar zx --no-same-owner --wildcards --absolute-names --transform 's,[^/]*,/usr/local,' '*/gh'
+# (asset names include the version, so resolve it from the releases/latest redirect rather than the rate-limited API)
+RUN ARCH=$(uname -m | sed -e s/aarch64/arm64/ -e s/x86_64/amd64/) \
+ && VERSION=$(curl -fsSLI -o /dev/null -w '%{url_effective}' https://github.com/cli/cli/releases/latest | sed 's,.*/tag/v,,') \
+ && curl -fsSL "https://github.com/cli/cli/releases/download/v${VERSION}/gh_${VERSION}_linux_${ARCH}.tar.gz" | tar zx --no-same-owner --wildcards --absolute-names --transform 's,[^/]*,/usr/local,' '*/gh'
 
 # Copy our scripts and template files
 COPY local /usr/local/
