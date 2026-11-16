@@ -128,7 +128,7 @@ RUN curl -sS https://starship.rs/install.sh | sh -s -- --yes
 # RUN PATH="$HOME/.cargo/bin:$PATH" cargo install atuin
 #
 # # So instead we download the latest precompiled binary for our cpu architecture:
-RUN curl -sL $(curl -s https://api.github.com/repos/atuinsh/atuin/releases/latest | jq -r '.assets[] | select(.name == "atuin-'`uname -m`'-unknown-linux-gnu.tar.gz") | .browser_download_url') | tar zx --no-same-owner --wildcards --absolute-names --transform 's,[^/]*,/usr/local/bin,' '*/atuin'
+RUN curl -fsSL "https://github.com/atuinsh/atuin/releases/latest/download/atuin-$(uname -m)-unknown-linux-gnu.tar.gz" | tar zx --no-same-owner --wildcards --absolute-names --transform 's,[^/]*,/usr/local/bin,' '*/atuin'
 
 # Prepare the .claude directory to work as a mounted volume that can been altered
 # Works around a Docker named-volume issue:
