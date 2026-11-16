@@ -76,8 +76,9 @@ RUN npm i @ast-grep/cli -g \
     && npm i yarn -g
 
 # Install a newer Neovim than what Debian provides.
-RUN curl -LO https://github.com/neovim/neovim/releases/latest/download/nvim-linux-x86_64.tar.gz \
-  && tar -C /opt -xzf nvim-linux-x86_64.tar.gz
+RUN mkdir -p /opt/nvim \
+  && curl -fsSL "https://github.com/neovim/neovim/releases/latest/download/nvim-linux-$(uname -m | sed s/aarch64/arm64/).tar.gz" \
+  | tar -C /opt/nvim --strip-components=1 -xz
 
 # Configure PHP, make memory_limit and upload_max_filesize match Pantheon
 RUN cp /usr/local/etc/php/php.ini-development /usr/local/etc/php/php.ini \
@@ -100,7 +101,7 @@ RUN a2enmod expires headers rewrite
 RUN echo "umask 002" >> /etc/apache2/envvars
 
 # Install terminus
-RUN curl -L https://github.com/pantheon-systems/terminus/releases/latest/download/terminus.phar --output /usr/local/bin/terminus \
+RUN curl -fsSL https://github.com/pantheon-systems/terminus/releases/latest/download/terminus.phar --output /usr/local/bin/terminus \
   && chmod +x /usr/local/bin/terminus \
 	&& terminus self:plugin:install terminus-secrets-manager-plugin
 
