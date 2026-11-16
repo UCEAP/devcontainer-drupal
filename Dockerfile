@@ -137,7 +137,10 @@ RUN curl -fsSL "https://github.com/atuinsh/atuin/releases/latest/download/atuin-
 RUN mkdir -p /home/vscode/.claude && chown vscode:vscode /home/vscode/.claude
 
 # Our base image has an ancient version of gh cli in apt, so we download the latest version instead
-RUN curl -sL $(curl -s https://api.github.com/repos/cli/cli/releases/latest | jq -r '.assets[] | select(.name | endswith("_linux_'`uname -m | sed s/aarch64/arm64/ | sed s/x86_64/amd64/`'.tar.gz")) | .browser_download_url') | tar zx --no-same-owner --wildcards --absolute-names --transform 's,[^/]*,/usr/local,' '*/gh'
+# (asset names include the version, so resolve it from the releases/latest redirect rather than the rate-limited API)
+RUN ARCH=$(uname -m | sed -e s/aarch64/arm64/ -e s/x86_64/amd64/) \
+ && VERSION=$(curl -fsSLI -o /dev/null -w '%{url_effective}' https://github.com/cli/cli/releases/latest | sed 's,.*/tag/v,,') \
+ && curl -fsSL "https://github.com/cli/cli/releases/download/v${VERSION}/gh_${VERSION}_linux_${ARCH}.tar.gz" | tar zx --no-same-owner --wildcards --absolute-names --transform 's,[^/]*,/usr/local,' '*/gh'
 
 # Copy our scripts and template files
 COPY local /usr/local/
