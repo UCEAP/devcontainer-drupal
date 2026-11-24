@@ -128,7 +128,9 @@ RUN curl -sS https://starship.rs/install.sh | sh -s -- --yes
 # RUN PATH="$HOME/.cargo/bin:$PATH" cargo install atuin
 #
 # # So instead we download the latest precompiled binary for our cpu architecture:
-RUN curl -sL $(curl -s https://api.github.com/repos/atuinsh/atuin/releases/latest | jq -r '.assets[] | select(.name == "atuin-'`uname -m`'-unknown-linux-gnu.tar.gz") | .browser_download_url') | tar zx --no-same-owner --wildcards --absolute-names --transform 's,[^/]*,/usr/local/bin,' '*/atuin'
+# The releases/latest/download URL avoids api.github.com, whose unauthenticated
+# rate limit on shared CI runners intermittently broke this step.
+RUN curl -fsSL "https://github.com/atuinsh/atuin/releases/latest/download/atuin-$(uname -m)-unknown-linux-gnu.tar.gz" | tar zx --no-same-owner --wildcards --absolute-names --transform 's,[^/]*,/usr/local/bin,' '*/atuin'
 
 # Prepare the .claude directory to work as a mounted volume that can been altered
 # Works around a Docker named-volume issue:
@@ -136,8 +138,13 @@ RUN curl -sL $(curl -s https://api.github.com/repos/atuinsh/atuin/releases/lates
 # it initializes that directory as root:root regardless of what user your container normally runs as.
 RUN mkdir -p /home/vscode/.claude && chown vscode:vscode /home/vscode/.claude
 
-# Our base image has an ancient version of gh cli in apt, so we download the latest version instead
-RUN curl -sL $(curl -s https://api.github.com/repos/cli/cli/releases/latest | jq -r '.assets[] | select(.name | endswith("_linux_'`uname -m | sed s/aarch64/arm64/ | sed s/x86_64/amd64/`'.tar.gz")) | .browser_download_url') | tar zx --no-same-owner --wildcards --absolute-names --transform 's,[^/]*,/usr/local,' '*/gh'
+# Our base image has an ancient version of gh cli in apt, so we download the latest version instead.
+# gh's asset names include the version, so read it from the releases/latest redirect
+# rather than api.github.com (rate-limited for unauthenticated CI runners).
+RUN GH_VERSION=$(curl -fsSL -o /dev/null -w '%{url_effective}' https://github.com/cli/cli/releases/latest) \
+    && GH_VERSION=${GH_VERSION##*/v} \
+    && GH_ARCH=$(uname -m | sed s/aarch64/arm64/ | sed s/x86_64/amd64/) \
+    && curl -fsSL "https://github.com/cli/cli/releases/download/v${GH_VERSION}/gh_${GH_VERSION}_linux_${GH_ARCH}.tar.gz" | tar zx --no-same-owner --wildcards --absolute-names --transform 's,[^/]*,/usr/local,' '*/gh'
 
 # Copy our scripts and template files
 COPY local /usr/local/
