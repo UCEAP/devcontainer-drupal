@@ -74,7 +74,7 @@ function devcontainer_on_create() {
   claude plugin install uceap
 
   # Put neovim in the PATH for those who celebrate
-  ln -s /opt/nvim-linux-x86_64/bin/nvim ~/.local/bin
+  ln -s /opt/nvim/bin/nvim ~/.local/bin
 
   # Setup shell completion
   uceap completion bash | sudo sh -c "cat > /etc/bash_completion.d/uceap"
