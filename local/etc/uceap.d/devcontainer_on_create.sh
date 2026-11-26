@@ -72,6 +72,11 @@ function devcontainer_on_create() {
   curl -fsSL https://claude.ai/install.sh | bash
   claude plugin marketplace add UCEAP/claude
   claude plugin install uceap
+  # Rebuilt containers get the latest plugin from the install above; auto-update
+  # keeps long-lived containers current too. It's off by default for non-official
+  # marketplaces. Set in user settings (not managed) so people can still opt out.
+  jq '.extraKnownMarketplaces.claude.autoUpdate = true' ~/.claude/settings.json > ~/.claude/settings.json.tmp \
+    && mv ~/.claude/settings.json.tmp ~/.claude/settings.json
 
   # Put neovim in the PATH for those who celebrate
   ln -s /opt/nvim/bin/nvim ~/.local/bin
